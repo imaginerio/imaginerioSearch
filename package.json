@@ -1,0 +1,17 @@
+{
+  "name": "imaginerio-search",
+  "version": "1.0.0",
+  "description": "Search API for imagineRio tools",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.5.1",
+    "sequelize": "^6.3.5"
+  },
+  "devDependencies": {
+    "eslint": "^7.14.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}
