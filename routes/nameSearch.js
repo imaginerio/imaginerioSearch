@@ -1,6 +1,6 @@
 const { Layer, Sequelize } = require('../models');
 
-module.exports = (router) => {
+module.exports = router => {
   router.get('/search', (req, res) => {
     const { text, year } = req.query;
     if (!text || !year) return res.sendStatus(500);
@@ -22,6 +22,6 @@ module.exports = (router) => {
         },
         required: true,
       },
-    }).then((layers) => res.send(layers));
+    }).then(layers => res.send(layers));
   });
 };

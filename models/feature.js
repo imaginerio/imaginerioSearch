@@ -1,6 +1,4 @@
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Feature extends Model {
@@ -8,16 +6,19 @@ module.exports = (sequelize, DataTypes) => {
       Feature.belongsTo(models.Layer);
     }
   }
-  Feature.init({
-    objectid: DataTypes.INTEGER,
-    name: DataTypes.TEXT,
-    firstyear: DataTypes.INTEGER,
-    lastyear: DataTypes.INTEGER,
-    LayerId: DataTypes.INTEGER,
-    geom: DataTypes.GEOMETRY,
-  }, {
-    sequelize,
-    modelName: 'Feature',
-  });
+  Feature.init(
+    {
+      objectid: DataTypes.INTEGER,
+      name: DataTypes.TEXT,
+      firstyear: DataTypes.INTEGER,
+      lastyear: DataTypes.INTEGER,
+      LayerId: DataTypes.INTEGER,
+      geom: DataTypes.GEOMETRY,
+    },
+    {
+      sequelize,
+      modelName: 'Feature',
+    }
+  );
   return Feature;
 };

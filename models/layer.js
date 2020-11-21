@@ -1,6 +1,4 @@
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Layer extends Model {
@@ -8,12 +6,15 @@ module.exports = (sequelize, DataTypes) => {
       Layer.hasMany(models.Feature);
     }
   }
-  Layer.init({
-    title: DataTypes.TEXT,
-    remoteId: DataTypes.INTEGER,
-  }, {
-    sequelize,
-    modelName: 'Layer',
-  });
+  Layer.init(
+    {
+      title: DataTypes.TEXT,
+      remoteId: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: 'Layer',
+    }
+  );
   return Layer;
 };

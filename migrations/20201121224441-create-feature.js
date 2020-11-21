@@ -39,7 +39,7 @@ module.exports = {
       },
     });
   },
-  down: async (queryInterface) => {
+  down: async queryInterface => {
     await queryInterface.dropTable('Features');
   },
 };
