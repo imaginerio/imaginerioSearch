@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { nanoid } = require('nanoid');
 const { Feature, Layer } = require('../models');
 
 module.exports = {
@@ -16,18 +17,17 @@ module.exports = {
             .get(
               `https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/${layer.remoteId}/query?where=name IS NOT NULL&outFields=objectid,name,firstyear,lastyear&f=geojson`
             )
-            .then(({ data: { features } }) =>
-              Feature.bulkCreate(
-                features.map(feature => {
-                  const props = {
-                    ...feature.properties,
-                    LayerId: layer.id,
-                    geom: feature.geometry,
-                  };
-                  return props;
+            .then(({ data: { features } }) => {
+              const featureLoader = features.map(feature =>
+                Feature.create({
+                  ...feature.properties,
+                  id: `i${nanoid(8)}`,
+                  LayerId: layer.id,
+                  geom: feature.geometry,
                 })
-              )
-            )
+              );
+              return Promise.all(featureLoader);
+            })
         )
       )
     );

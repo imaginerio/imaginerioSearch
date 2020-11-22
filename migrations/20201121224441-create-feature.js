@@ -3,9 +3,8 @@ module.exports = {
     await queryInterface.createTable('Features', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.TEXT,
       },
       objectid: {
         type: Sequelize.INTEGER,
