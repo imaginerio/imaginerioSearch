@@ -4,7 +4,7 @@ const { nanoid } = require('nanoid');
 const { range } = require('lodash');
 const { Feature, Layer } = require('../models');
 
-const STEP = 200;
+const STEP = 1000;
 
 module.exports = {
   up: async () => {
@@ -27,18 +27,19 @@ module.exports = {
         });
 
     const layerLoader = async l => {
-      console.log(`Loading ${l.name}`);
-      const layer = await Layer.create();
-      console.log(layer);
+      console.log(`----- Loading ${l.name} -----`);
+      const layer = Layer.build({
+        title: l.name,
+        remoteId: l.id,
+      });
+      await layer.save();
       const {
         data: { count },
       } = await axios.get(
         `https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true`
       );
 
-      console.log(count);
-
-      range(0, count, STEP).reduce(async (previousPromise, next) => {
+      return range(0, count, STEP).reduce(async (previousPromise, next) => {
         await previousPromise;
         return stepLoader(layer, next, count);
       }, Promise.resolve());
@@ -50,7 +51,7 @@ module.exports = {
       'https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/layers?f=json'
     );
     layers = layers.filter(l => !l.name.match(/^ir_rio/));
-    layers.reduce(async (previousPromise, next) => {
+    return layers.reduce(async (previousPromise, next) => {
       await previousPromise;
       return layerLoader(next);
     }, Promise.resolve());
