@@ -5,8 +5,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "db:migrate:reset": "sequelize db:migrate:undo:all && sequelize db:migrate",
-    "db:seed": "sequelize db:seed:all"
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:migrate:reset": "npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed"
   },
   "dependencies": {
     "axios": "^0.21.0",
