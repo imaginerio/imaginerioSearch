@@ -20,8 +20,8 @@ module.exports = router => {
             [Sequelize.Op.iLike]: `%${text}%`,
           },
         },
-        required: true,
+        limit: 5,
       },
-    }).then(layers => res.send(layers));
+    }).then(layers => res.send(layers.filter(l => l.Features.length)));
   });
 };
