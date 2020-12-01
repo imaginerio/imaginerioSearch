@@ -7,6 +7,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      name: {
+        type: Sequelize.TEXT,
+      },
       title: {
         type: Sequelize.TEXT,
       },

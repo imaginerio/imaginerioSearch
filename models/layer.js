@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Layer.init(
     {
+      name: DataTypes.TEXT,
       title: DataTypes.TEXT,
       remoteId: DataTypes.INTEGER,
     },

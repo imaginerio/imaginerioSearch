@@ -10,5 +10,6 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
 require('./routes/nameSearch')(app);
+require('./routes/layers')(app);
 
 app.listen(port, () => console.log(`Server started on ${port}`));
