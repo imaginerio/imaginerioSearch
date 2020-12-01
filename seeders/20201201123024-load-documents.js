@@ -2,7 +2,7 @@
 const axios = require('axios');
 const { nanoid } = require('nanoid');
 const { range } = require('lodash');
-const { Feature, Layer } = require('../models');
+const { Visual, Document } = require('../models');
 
 const STEP = 1000;
 
@@ -11,15 +11,16 @@ module.exports = {
     const stepLoader = (layer, i, count) =>
       axios
         .get(
-          `https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=objectid,name,firstyear,lastyear&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}`
+          `https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/${layer.remoteId}/query?where=objectid%20IS%20NOT%20NULL&outFields=objectid,firstyear,lastyear,notes,latitude,longitude&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}`
         )
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const featureLoader = features.map(feature =>
-            Feature.create({
+            Document.create({
               ...feature.properties,
               id: `i${nanoid(8)}`,
-              LayerId: layer.id,
+              VisualId: layer.id,
+              ssid: `SSID${feature.properties.notes}`,
               geom: feature.geometry,
             })
           );
@@ -28,9 +29,12 @@ module.exports = {
 
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
-      const layer = Layer.build({
-        name: l.name,
-        title: l.name.replace(/(Poly|Line)$/, '').replace(/(?!^)([A-Z])/gm, ` $1`),
+      const layer = Visual.build({
+        name: l.name.replace(/.*\./gm, ''),
+        title: l.name
+          .replace(/.*\./gm, '')
+          .replace(/(Poly|Line)$/, '')
+          .replace(/(?!^)([A-Z])/gm, ` $1`),
         remoteId: l.id,
       });
       await layer.save();
@@ -51,7 +55,7 @@ module.exports = {
     } = await axios.get(
       'https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/layers?f=json'
     );
-    layers = layers.filter(l => !l.name.match(/^ir_rio/));
+    layers = layers.filter(l => l.name.match(/^ir_rio/));
     return layers.reduce(async (previousPromise, next) => {
       await previousPromise;
       return layerLoader(next);
@@ -59,5 +63,5 @@ module.exports = {
   },
 
   down: async queryInterface =>
-    queryInterface.bulkDelete('Features').then(() => queryInterface.bulkDelete('Layers')),
+    queryInterface.bulkDelete('Visuals').then(() => queryInterface.bulkDelete('Documents')),
 };
