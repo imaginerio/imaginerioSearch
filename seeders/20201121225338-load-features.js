@@ -29,7 +29,7 @@ module.exports = {
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
       const layer = Layer.build({
-        title: l.name,
+        title: l.name.replace(/(Poly|Line)$/, '').replace(/(?!^)([A-Z])/gm, ` $1`),
         remoteId: l.id,
       });
       await layer.save();
