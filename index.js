@@ -19,6 +19,7 @@ app.use(bodyparser.json());
 
 require('./routes/search')(app);
 require('./routes/layers')(app);
+require('./routes/documents')(app);
 require('./routes/probe')(app);
 
 app.listen(port, () => console.log(`Server started on ${port}`));

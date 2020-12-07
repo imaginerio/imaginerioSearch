@@ -9,6 +9,9 @@ module.exports = {
       ssid: {
         type: Sequelize.TEXT,
       },
+      title: {
+        type: Sequelize.TEXT,
+      },
       firstyear: {
         type: Sequelize.INTEGER,
       },

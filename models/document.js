@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   Document.init(
     {
       ssid: DataTypes.TEXT,
+      title: DataTypes.TEXT,
       firstyear: DataTypes.INTEGER,
       lastyear: DataTypes.INTEGER,
       VisualId: DataTypes.INTEGER,

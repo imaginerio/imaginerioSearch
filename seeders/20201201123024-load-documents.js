@@ -2,6 +2,7 @@
 const axios = require('axios');
 const { nanoid } = require('nanoid');
 const { range } = require('lodash');
+const centroid = require('@turf/centroid').default;
 const { Visual, Document } = require('../models');
 
 const STEP = 1000;
@@ -11,19 +12,25 @@ module.exports = {
     const stepLoader = (layer, i, count) =>
       axios
         .get(
-          `https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/${layer.remoteId}/query?where=objectid%20IS%20NOT%20NULL&outFields=objectid,firstyear,lastyear,notes,latitude,longitude&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}`
+          `https://arcgis.rice.edu/arcgis/rest/services/imagineRio_Data/FeatureServer/${layer.remoteId}/query?where=objectid%20IS%20NOT%20NULL&outFields=objectid,title,firstyear,lastyear,notes,latitude,longitude&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}`
         )
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
-          const featureLoader = features.map(feature =>
-            Document.create({
+          const featureLoader = features.map(feature => {
+            const ssid = `SSID${feature.properties.notes}`;
+            if (!feature.properties.longitude || !feature.properties.latitude) {
+              const point = centroid(feature.geometry);
+              // eslint-disable-next-line no-param-reassign, prettier/prettier
+              [feature.properties.longitude, feature.properties.latitude] = point.geometry.coordinates;
+            }
+            return Document.create({
               ...feature.properties,
               id: `i${nanoid(8)}`,
               VisualId: layer.id,
-              ssid: `SSID${feature.properties.notes}`,
+              ssid,
               geom: feature.geometry,
-            })
-          );
+            });
+          });
           return Promise.all(featureLoader);
         });
 
@@ -34,7 +41,8 @@ module.exports = {
         title: l.name
           .replace(/.*\./gm, '')
           .replace(/(Poly|Line)$/, '')
-          .replace(/(?!^)([A-Z])/gm, ` $1`),
+          .replace(/(?!^)([A-Z])/gm, ` $1`)
+          .replace(/ .*/, 's'),
         remoteId: l.id,
       });
       await layer.save();

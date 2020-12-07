@@ -11,6 +11,7 @@
     "db:migrate:reset": "npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed"
   },
   "dependencies": {
+    "@turf/centroid": "^6.0.2",
     "axios": "^0.21.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",

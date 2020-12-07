@@ -3,7 +3,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Visual extends Model {
     static associate(models) {
-      // define association here
+      Visual.hasMany(models.Document);
     }
   }
   Visual.init(
