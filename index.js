@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyparser = require('body-parser');
 const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 
 const port = process.env.PORT || 5000;
 
@@ -13,6 +14,7 @@ const limiter = rateLimit({
   max: 100,
 });
 app.use(limiter);
+app.use(cors());
 
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
