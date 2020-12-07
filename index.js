@@ -21,6 +21,7 @@ app.use(bodyparser.json());
 
 require('./routes/search')(app);
 require('./routes/layers')(app);
+require('./routes/feature')(app);
 require('./routes/documents')(app);
 require('./routes/probe')(app);
 
