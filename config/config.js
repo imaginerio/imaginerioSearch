@@ -2,17 +2,11 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    username: 'postgres',
-    password: 'postgres',
-    database: 'postgres',
-    host: '127.0.0.1',
+    url: 'postgresql://postgres:postgres@127.0.0.1/postgres',
     dialect: 'postgres',
   },
   test: {
-    username: 'postgres',
-    password: 'postgres',
-    database: 'postgres_test',
-    host: '127.0.0.1',
+    url: 'postgresql://postgres:postgres@127.0.0.1/postgres',
     dialect: 'postgres',
   },
   production: {
