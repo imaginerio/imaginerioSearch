@@ -6,7 +6,7 @@ const { range } = require('lodash');
 const centroid = require('@turf/centroid').default;
 
 const { authenticate } = require('../utils/auth');
-const { Visual, Document } = require('../models');
+const { Visual, Document, Sequelize } = require('../models');
 
 const STEP = 1000;
 const visual = ['PlanExtentsPoly', 'MapExtentsPoly', 'ViewConesPoly', 'SurveyExtentsPoly'];
@@ -35,7 +35,11 @@ module.exports = {
               id: `i${nanoid(8)}`,
               VisualId: layer.id,
               ssid,
-              geom: feature.geometry,
+              geom: Sequelize.fn(
+                'ST_SetSRID',
+                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
+                4326
+              ),
             });
           });
           return Promise.all(featureLoader);

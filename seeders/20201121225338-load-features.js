@@ -5,7 +5,7 @@ const { nanoid } = require('nanoid');
 const { range } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
-const { Feature, Layer } = require('../models');
+const { Feature, Layer, Sequelize } = require('../models');
 
 const STEP = 1000;
 const visual = ['PlanExtentsPoly', 'MapExtentsPoly', 'ViewConesPoly', 'SurveyExtentsPoly'];
@@ -27,7 +27,11 @@ module.exports = {
               ...feature.properties,
               id: `i${nanoid(8)}`,
               LayerId: layer.id,
-              geom: feature.geometry,
+              geom: Sequelize.fn(
+                'ST_SetSRID',
+                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
+                4326
+              ),
             })
           );
           return Promise.all(featureLoader);
