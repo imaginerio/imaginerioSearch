@@ -3,7 +3,8 @@ const { Feature, Sequelize } = require('../models');
 module.exports = router => {
   router.get('/feature/:id', (req, res) => {
     const { id } = req.params;
-    if (!id) return res.sendStatus(500);
+    const { year } = req.query;
+    if (!id || !year) return res.sendStatus(500);
     return Feature.findByPk(id, { attributes: ['id', 'name', 'geom'] }).then(feature =>
       Feature.findOne({
         attributes: [[Sequelize.fn('ST_Collect', Sequelize.col('geom')), 'geom']],
@@ -11,6 +12,16 @@ module.exports = router => {
         where: {
           [Sequelize.Op.and]: [
             { name: feature.name },
+            {
+              firstyear: {
+                [Sequelize.Op.lte]: parseInt(year, 10),
+              },
+            },
+            {
+              lastyear: {
+                [Sequelize.Op.gte]: parseInt(year, 10),
+              },
+            },
             Sequelize.where(
               Sequelize.fn(
                 'ST_Intersects',
