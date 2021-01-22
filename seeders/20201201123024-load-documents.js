@@ -8,7 +8,7 @@ const centroid = require('@turf/centroid').default;
 const { authenticate } = require('../utils/auth');
 const { Visual, Document, Sequelize } = require('../models');
 
-const STEP = 1000;
+const STEP = 500;
 const visual = ['PlanExtentsPoly', 'MapExtentsPoly', 'ViewConesPoly', 'SurveyExtentsPoly'];
 
 module.exports = {
