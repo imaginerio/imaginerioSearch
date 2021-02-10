@@ -23,6 +23,7 @@ require('./routes/search')(app);
 require('./routes/layers')(app);
 require('./routes/feature')(app);
 require('./routes/documents')(app);
+require('./routes/document')(app);
 require('./routes/probe')(app);
 
 app.listen(port, () => console.log(`Server started on ${port}`));
