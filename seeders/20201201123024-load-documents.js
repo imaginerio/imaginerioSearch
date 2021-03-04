@@ -10,7 +10,13 @@ const { authenticate } = require('../utils/auth');
 const { Visual, Document, Sequelize } = require('../models');
 
 const STEP = 500;
-const visual = ['PlanExtentsPoly', 'MapExtentsPoly', 'ViewConesPoly', 'SurveyExtentsPoly'];
+const visual = [
+  'AerialExtentsPoly',
+  'PlanExtentsPoly',
+  'MapExtentsPoly',
+  'ViewConesPoly',
+  'SurveyExtentsPoly',
+];
 
 module.exports = {
   up: async () => {

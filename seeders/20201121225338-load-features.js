@@ -9,7 +9,13 @@ const { authenticate } = require('../utils/auth');
 const { Feature, Layer, Sequelize } = require('../models');
 
 const STEP = 500;
-const visual = ['PlanExtentsPoly', 'MapExtentsPoly', 'ViewConesPoly', 'SurveyExtentsPoly'];
+const visual = [
+  'AerialExtentsPoly',
+  'PlanExtentsPoly',
+  'MapExtentsPoly',
+  'ViewConesPoly',
+  'SurveyExtentsPoly',
+];
 
 module.exports = {
   up: async () => {
@@ -23,18 +29,20 @@ module.exports = {
         )
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
-          const featureLoader = features.map(feature =>
-            Feature.create({
-              ...feature.properties,
-              id: `i${nanoid(8)}`,
-              LayerId: layer.id,
-              geom: Sequelize.fn(
-                'ST_SetSRID',
-                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
-                4326
-              ),
-            })
-          );
+          const featureLoader = features
+            .filter(f => f.geometry)
+            .map(feature =>
+              Feature.create({
+                ...feature.properties,
+                id: `i${nanoid(8)}`,
+                LayerId: layer.id,
+                geom: Sequelize.fn(
+                  'ST_SetSRID',
+                  Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
+                  4326
+                ),
+              })
+            );
           return Promise.all(featureLoader);
         });
 
