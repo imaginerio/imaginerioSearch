@@ -1,14 +1,21 @@
 /* eslint-disable no-console */
+require('dotenv').config();
 const axios = require('axios');
 const https = require('https');
-const { nanoid } = require('nanoid');
+const md5 = require('md5');
 const { range } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
 const { Feature, Layer, Sequelize } = require('../models');
 
 const STEP = 500;
-const visual = ['PlanExtentsPoly', 'MapExtentsPoly', 'ViewConesPoly', 'SurveyExtentsPoly'];
+const visual = [
+  'AerialExtentsPoly',
+  'PlanExtentsPoly',
+  'MapExtentsPoly',
+  'ViewConesPoly',
+  'SurveyExtentsPoly',
+];
 
 module.exports = {
   up: async () => {
@@ -17,24 +24,28 @@ module.exports = {
     const stepLoader = (layer, i, count) =>
       axios
         .get(
-          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/imagineRio/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=objectid,name,firstyear,lastyear&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
+          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=objectid,name,firstyear,lastyear&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
           { httpsAgent }
         )
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
-          const featureLoader = features.map(feature =>
-            Feature.create({
+          const featureLoader = features
+            .filter(f => f.geometry)
+            .map(feature => ({
               ...feature.properties,
-              id: `i${nanoid(8)}`,
+              id: `'${md5(
+                `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
+              )}'`,
               LayerId: layer.id,
               geom: Sequelize.fn(
                 'ST_SetSRID',
                 Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
                 4326
               ),
-            })
-          );
-          return Promise.all(featureLoader);
+            }));
+          return Feature.bulkCreate(featureLoader, {
+            updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'geom'],
+          });
         });
 
     const layerLoader = async l => {
@@ -48,7 +59,7 @@ module.exports = {
       const {
         data: { count },
       } = await axios.get(
-        `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/imagineRio/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true&token=${token}`,
+        `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true&token=${token}`,
         { httpsAgent }
       );
 
@@ -61,7 +72,7 @@ module.exports = {
     let {
       data: { layers },
     } = await axios.get(
-      `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/imagineRio/FeatureServer/layers?f=json&token=${token}`,
+      `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/layers?f=json&token=${token}`,
       { httpsAgent }
     );
     layers = layers.filter(l => !visual.includes(l.name));

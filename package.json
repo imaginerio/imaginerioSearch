@@ -8,6 +8,7 @@
     "dev": "npx nodemon index.js",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
+    "db:job": "yarn db:migrate && yarn db:seed",
     "db:migrate:reset": "npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed"
   },
   "dependencies": {
@@ -19,7 +20,7 @@
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.3",
     "lodash": "^4.17.20",
-    "nanoid": "^3.1.18",
+    "md5": "^2.3.0",
     "pg": "^8.5.1",
     "sequelize": "^6.3.5"
   },
