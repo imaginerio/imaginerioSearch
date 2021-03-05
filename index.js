@@ -8,6 +8,8 @@ const bodyparser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 
+const startup = require('./startup').default;
+
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -27,5 +29,7 @@ const routes = fs.readdirSync(path.join(__dirname, 'routes'));
 routes.forEach(route => {
   require(path.join(__dirname, 'routes', route))(app);
 });
+
+startup();
 
 app.listen(port, () => console.log(`Server started on ${port}`));
