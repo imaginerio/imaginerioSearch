@@ -30,6 +30,6 @@ routes.forEach(route => {
   require(path.join(__dirname, 'routes', route))(app);
 });
 
-startup();
-
 app.listen(port, () => console.log(`Server started on ${port}`));
+
+startup();
