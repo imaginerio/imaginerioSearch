@@ -2,7 +2,7 @@
 require('dotenv').config();
 const axios = require('axios');
 const https = require('https');
-const { nanoid } = require('nanoid');
+const md5 = require('md5');
 const { range } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
@@ -31,19 +31,21 @@ module.exports = {
           console.log(`${i} / ${count}`);
           const featureLoader = features
             .filter(f => f.geometry)
-            .map(feature =>
-              Feature.create({
-                ...feature.properties,
-                id: `i${nanoid(8)}`,
-                LayerId: layer.id,
-                geom: Sequelize.fn(
-                  'ST_SetSRID',
-                  Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
-                  4326
-                ),
-              })
-            );
-          return Promise.all(featureLoader);
+            .map(feature => ({
+              ...feature.properties,
+              id: `'${md5(
+                `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
+              )}'`,
+              LayerId: layer.id,
+              geom: Sequelize.fn(
+                'ST_SetSRID',
+                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
+                4326
+              ),
+            }));
+          return Feature.bulkCreate(featureLoader, {
+            updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'geom'],
+          });
         });
 
     const layerLoader = async l => {

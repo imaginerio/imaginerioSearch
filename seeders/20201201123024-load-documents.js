@@ -2,7 +2,7 @@
 require('dotenv').config();
 const axios = require('axios');
 const https = require('https');
-const { nanoid } = require('nanoid');
+const md5 = require('md5');
 const { range } = require('lodash');
 const centroid = require('@turf/centroid').default;
 
@@ -37,9 +37,11 @@ module.exports = {
               // eslint-disable-next-line no-param-reassign, prettier/prettier
               [feature.properties.longitude, feature.properties.latitude] = point.geometry.coordinates;
             }
-            return Document.create({
+            return {
               ...feature.properties,
-              id: `i${nanoid(8)}`,
+              id: `'${md5(
+                `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
+              )}'`,
               VisualId: layer.id,
               ssid,
               geom: Sequelize.fn(
@@ -47,9 +49,11 @@ module.exports = {
                 Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
                 4326
               ),
-            });
+            };
           });
-          return Promise.all(featureLoader);
+          return Document.bulkCreate(featureLoader, {
+            updateOnDuplicate: ['title', 'firstyear', 'lastyear', 'latitude', 'longitude', 'geom'],
+          });
         });
 
     const layerLoader = async l => {
