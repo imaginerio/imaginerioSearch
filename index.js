@@ -1,4 +1,8 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
 /* eslint-disable no-console */
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const bodyparser = require('body-parser');
 const rateLimit = require('express-rate-limit');
@@ -19,11 +23,9 @@ app.use(cors());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
-require('./routes/search')(app);
-require('./routes/layers')(app);
-require('./routes/feature')(app);
-require('./routes/documents')(app);
-require('./routes/document')(app);
-require('./routes/probe')(app);
+const routes = fs.readdirSync(path.join(__dirname, 'routes'));
+routes.forEach(route => {
+  require(path.join(__dirname, 'routes', route))(app);
+});
 
 app.listen(port, () => console.log(`Server started on ${port}`));
