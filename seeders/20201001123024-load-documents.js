@@ -52,22 +52,34 @@ module.exports = {
             };
           });
           return Document.bulkCreate(featureLoader, {
-            updateOnDuplicate: ['title', 'firstyear', 'lastyear', 'latitude', 'longitude', 'geom'],
+            updateOnDuplicate: [
+              'title',
+              'firstyear',
+              'lastyear',
+              'latitude',
+              'longitude',
+              'VisualId',
+              'geom',
+            ],
           });
         });
 
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
-      const layer = Visual.build({
-        name: l.name.replace(/.*\./gm, ''),
-        title: l.name
-          .replace(/.*\./gm, '')
-          .replace(/(Poly|Line)$/, '')
-          .replace(/(?!^)([A-Z])/gm, ` $1`)
-          .replace(/ .*/, 's'),
-        remoteId: l.id,
-      });
-      await layer.save();
+      const name = l.name.replace(/.*\./gm, '');
+      let layer = await Visual.findOne({ where: { name } });
+      if (!layer) {
+        layer = Visual.build({
+          name,
+          title: l.name
+            .replace(/.*\./gm, '')
+            .replace(/(Poly|Line)$/, '')
+            .replace(/(?!^)([A-Z])/gm, ` $1`)
+            .replace(/ .*/, 's'),
+          remoteId: l.id,
+        });
+        await layer.save();
+      }
       const {
         data: { count },
       } = await axios.get(
