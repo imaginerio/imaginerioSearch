@@ -31,7 +31,7 @@ module.exports = {
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const featureLoader = features.map(feature => {
-            const ssid = `SSID${feature.properties.notes || feature.properties.ss_id}`;
+            const ssid = `SSID${feature.properties.ss_id || feature.properties.notes}`;
             if (!feature.properties.longitude || !feature.properties.latitude) {
               const point = centroid(feature.geometry);
               // eslint-disable-next-line no-param-reassign, prettier/prettier
