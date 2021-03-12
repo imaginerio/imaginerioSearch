@@ -44,7 +44,7 @@ module.exports = {
               ),
             }));
           return Feature.bulkCreate(featureLoader, {
-            updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'type', 'geom'],
+            updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'type', 'geom', 'updatedAt'],
           });
         });
 

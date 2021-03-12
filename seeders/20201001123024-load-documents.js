@@ -60,6 +60,7 @@ module.exports = {
               'longitude',
               'VisualId',
               'geom',
+              'updatedAt',
             ],
           });
         });
