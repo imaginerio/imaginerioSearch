@@ -7,6 +7,10 @@ module.exports = router => {
       where: {
         [Sequelize.Op.or]: [{ ssid: req.params.id }, { id: req.params.id }],
       },
+      include: {
+        association: 'Visual',
+        attributes: ['title'],
+      },
     }).then(document =>
       res.send({
         type: 'FeatureCollection',
@@ -15,6 +19,7 @@ module.exports = router => {
             type: 'Feature',
             properties: {
               title: document.title,
+              type: document.Visual.title,
             },
             geometry: document.geom,
           },
