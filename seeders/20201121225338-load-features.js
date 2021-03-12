@@ -24,7 +24,7 @@ module.exports = {
     const stepLoader = (layer, i, count) =>
       axios
         .get(
-          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=objectid,name,firstyear,lastyear&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
+          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=objectid,name,type,firstyear,lastyear&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
           { httpsAgent }
         )
         .then(({ data: { features } }) => {
@@ -50,12 +50,16 @@ module.exports = {
 
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
-      const layer = Layer.build({
-        name: l.name,
-        title: l.name.replace(/(Poly|Line)$/, '').replace(/(?!^)([A-Z])/gm, ` $1`),
-        remoteId: l.id,
-      });
-      await layer.save();
+      const name = l.name.replace(/.*\./gm, '');
+      let layer = await Layer.findOne({ where: { name } });
+      if (!layer) {
+        layer = Layer.build({
+          name,
+          title: l.name.replace(/(Poly|Line)$/, '').replace(/(?!^)([A-Z])/gm, ` $1`),
+          remoteId: l.id,
+        });
+        await layer.save();
+      }
       const {
         data: { count },
       } = await axios.get(
