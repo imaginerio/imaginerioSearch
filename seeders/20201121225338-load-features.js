@@ -29,20 +29,19 @@ module.exports = {
         )
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
-          const featureLoader = features
-            .filter(f => f.geometry)
-            .map(feature => ({
-              ...feature.properties,
-              id: `'${md5(
-                `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
-              )}'`,
-              LayerId: layer.id,
-              geom: Sequelize.fn(
-                'ST_SetSRID',
-                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
-                4326
-              ),
-            }));
+          const validFeatures = features ? features.filter(f => f.geometry) : [];
+          const featureLoader = validFeatures.map(feature => ({
+            ...feature.properties,
+            id: `'${md5(
+              `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
+            )}'`,
+            LayerId: layer.id,
+            geom: Sequelize.fn(
+              'ST_SetSRID',
+              Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
+              4326
+            ),
+          }));
           return Feature.bulkCreate(featureLoader, {
             updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'type', 'geom', 'updatedAt'],
           });
