@@ -5,7 +5,7 @@ module.exports = router => {
     const { id } = req.params;
     const { year } = req.query;
     if (!id || !year) return res.sendStatus(500);
-    return Feature.findByPk(id, { attributes: ['id', 'name', 'geom'] }).then(feature =>
+    return Feature.findByPk(id, { attributes: ['id', 'name', 'type', 'geom'] }).then(feature =>
       Feature.findOne({
         attributes: [[Sequelize.fn('ST_Collect', Sequelize.col('geom')), 'geom']],
         group: ['name'],
@@ -47,6 +47,7 @@ module.exports = router => {
           properties: {
             id: feature.id,
             name: feature.name,
+            type: feature.type,
           },
         })
       )
