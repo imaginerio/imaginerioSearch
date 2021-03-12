@@ -15,20 +15,19 @@ module.exports = router => {
       };
     }
 
-    return Layer.findAll({
-      where,
-      attributes: ['id', 'name', 'title'],
-    }).then(layers =>
+    return Layer.findAll({ attributes: ['id', 'name', 'title'] }).then(layers =>
       Feature.findAll({
         where,
         attributes: ['LayerId', 'type'],
         group: ['LayerId', 'type'],
         order: ['LayerId', 'type'],
       }).then(types => {
-        const result = layers.map(l => ({
-          ...l.dataValues,
-          types: types.filter(t => t.LayerId === l.id).map(t => t.type),
-        }));
+        const result = layers
+          .map(l => ({
+            ...l.dataValues,
+            types: types.filter(t => t.LayerId === l.id).map(t => t.type),
+          }))
+          .filter(l => l.types && l.types.length);
         res.send(result);
       })
     );
