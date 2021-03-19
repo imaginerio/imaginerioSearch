@@ -15,6 +15,7 @@ const visual = [
   'MapExtentsPoly',
   'ViewConesPoly',
   'SurveyExtentsPoly',
+  'BasemapExtentsPoly',
 ];
 const OMIT = process.env.OMIT ? JSON.parse(process.env.OMIT) : [];
 
