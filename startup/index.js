@@ -15,7 +15,12 @@ const executeMigrations = async (dir, table) => {
     return require(path.join(__dirname, '../', dir, file))
       .up(sequelize.queryInterface, Sequelize)
       .then(() =>
-        sequelize.query(`INSERT INTO "${table}" VALUES ('${file}')`, Sequelize.QueryTypes.INSERT)
+        table
+          ? sequelize.query(
+              `INSERT INTO "${table}" VALUES ('${file}')`,
+              Sequelize.QueryTypes.INSERT
+            )
+          : Promise.resolve()
       );
   };
 
