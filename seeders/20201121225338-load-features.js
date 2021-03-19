@@ -16,6 +16,7 @@ const visual = [
   'ViewConesPoly',
   'SurveyExtentsPoly',
 ];
+const OMIT = process.env.OMIT ? JSON.parse(process.env.OMIT) : [];
 
 module.exports = {
   up: async () => {
@@ -78,7 +79,7 @@ module.exports = {
       `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/layers?f=json&token=${token}`,
       { httpsAgent }
     );
-    layers = layers.filter(l => !visual.includes(l.name));
+    layers = layers.filter(l => !visual.includes(l.name) && !OMIT.includes(l.name));
     return layers.reduce(async (previousPromise, next) => {
       await previousPromise;
       return layerLoader(next);
