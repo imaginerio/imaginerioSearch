@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       ssid: DataTypes.TEXT,
       title: DataTypes.TEXT,
+      creator: DataTypes.TEXT,
+      creditline: DataTypes.TEXT,
+      artstor: DataTypes.TEXT,
       firstyear: DataTypes.INTEGER,
       lastyear: DataTypes.INTEGER,
       VisualId: DataTypes.INTEGER,

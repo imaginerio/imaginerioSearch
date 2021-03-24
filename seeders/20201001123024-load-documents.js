@@ -44,6 +44,7 @@ module.exports = {
               )}'`,
               VisualId: layer.id,
               ssid,
+              artstor: feature.properties.ssc_id,
               geom: Sequelize.fn(
                 'ST_SetSRID',
                 Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
@@ -61,6 +62,9 @@ module.exports = {
               'VisualId',
               'geom',
               'updatedAt',
+              'creator',
+              'creditline',
+              'artstor',
             ],
           });
         });
