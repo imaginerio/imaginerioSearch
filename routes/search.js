@@ -16,9 +16,18 @@ module.exports = router => {
           lastyear: {
             [Sequelize.Op.gte]: parseInt(year, 10),
           },
-          name: {
-            [Sequelize.Op.iLike]: `%${text}%`,
-          },
+          [Sequelize.Op.or]: [
+            {
+              name: {
+                [Sequelize.Op.iLike]: `%${text}%`,
+              },
+            },
+            {
+              namealt: {
+                [Sequelize.Op.iLike]: `%${text}%`,
+              },
+            },
+          ],
         },
         limit: 5,
       },

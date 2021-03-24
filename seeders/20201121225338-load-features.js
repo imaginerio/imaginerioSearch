@@ -26,7 +26,7 @@ module.exports = {
     const stepLoader = (layer, i, count) =>
       axios
         .get(
-          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=objectid,name,type,firstyear,lastyear&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
+          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=*&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
           { httpsAgent }
         )
         .then(({ data: { features } }) => {
@@ -34,6 +34,7 @@ module.exports = {
           const validFeatures = features ? features.filter(f => f.geometry) : [];
           const featureLoader = validFeatures.map(feature => ({
             ...feature.properties,
+            namealt: feature.properties.namealt_2 || feature.properties.namealt,
             id: `'${md5(
               `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
             )}'`,
