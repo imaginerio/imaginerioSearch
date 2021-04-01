@@ -17,16 +17,12 @@ module.exports = router => {
             [Sequelize.Op.gte]: parseInt(year, 10),
           },
           [Sequelize.Op.or]: [
-            {
-              name: {
-                [Sequelize.Op.iLike]: `%${text}%`,
-              },
-            },
-            {
-              namealt: {
-                [Sequelize.Op.iLike]: `%${text}%`,
-              },
-            },
+            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('name')), {
+              [Sequelize.Op.iLike]: `%${text}%`,
+            }),
+            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('namealt')), {
+              [Sequelize.Op.iLike]: `%${text}%`,
+            }),
           ],
         },
         limit: 5,
