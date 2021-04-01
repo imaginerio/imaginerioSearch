@@ -31,7 +31,11 @@ module.exports = {
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const featureLoader = features.map(feature => {
-            const ssid = `SSID${feature.properties.ss_id || feature.properties.notes}`;
+            const ssid = `SSID${
+              feature.properties.notes && feature.properties.notes.match(/^\d+$/)
+                ? feature.properties.notes
+                : feature.properties.ss_id
+            }`;
             if (!feature.properties.longitude || !feature.properties.latitude) {
               const point = centroid(feature.geometry);
               // eslint-disable-next-line no-param-reassign, prettier/prettier
@@ -55,6 +59,7 @@ module.exports = {
           return Document.bulkCreate(featureLoader, {
             updateOnDuplicate: [
               'title',
+              'ssid',
               'firstyear',
               'lastyear',
               'latitude',
