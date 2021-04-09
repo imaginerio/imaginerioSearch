@@ -1,4 +1,4 @@
-const { Layer, Feature, Sequelize } = require('../models');
+const { Layer, Feature, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/layers', (req, res) => {

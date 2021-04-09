@@ -1,4 +1,4 @@
-const { Layer, Sequelize } = require('../models');
+const { Layer, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/search', (req, res) => {

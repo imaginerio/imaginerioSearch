@@ -1,4 +1,4 @@
-const { Visual, Sequelize } = require('../models');
+const { Visual, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/documents', (req, res) => {
