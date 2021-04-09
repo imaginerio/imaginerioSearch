@@ -1,6 +1,7 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
 
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -28,6 +29,6 @@ routes.forEach(route => {
   require(path.join(__dirname, 'routes', route))(app);
 });
 
-startup();
+if (process.env.NODE_ENV === 'production') startup();
 
 module.exports = app;
