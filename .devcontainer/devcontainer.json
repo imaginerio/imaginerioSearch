@@ -14,7 +14,7 @@
 			"previewLimit": 50,
 			"server": "localhost",
 			"port": 5432,
-			"database": "postgres",
+			"database": "imagineriosearch",
 			"username": "postgres",
 			"password": "postgres"
 		}]

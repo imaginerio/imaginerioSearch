@@ -2,12 +2,12 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    url: 'postgresql://127.0.0.1/imaginerio-search',
+    url: 'postgresql://postgres:postgres@127.0.0.1/imagineriosearch',
     dialect: 'postgres',
     seederStorage: 'sequelize',
   },
   test: {
-    url: 'postgresql://postgres:postgres@127.0.0.1/postgres',
+    url: 'postgresql://postgres:postgres@127.0.0.1/imagineriotest',
     dialect: 'postgres',
     seederStorage: 'sequelize',
   },

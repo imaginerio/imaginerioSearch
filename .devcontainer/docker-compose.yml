@@ -32,6 +32,7 @@ services:
     restart: unless-stopped
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
