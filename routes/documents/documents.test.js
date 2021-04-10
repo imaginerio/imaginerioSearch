@@ -1,13 +1,13 @@
 const supertest = require('supertest');
 const faker = require('faker');
-const { omit } = require('lodash');
+const { pick } = require('lodash');
 const { sequelize, Visual, Document } = require('../../models');
 const app = require('../../server');
 
 describe('test document API route', () => {
-  it('should succeed when accessing a valid document', async () => {
-    await Visual.destroy({ where: {} });
-    await Document.destroy({ where: {} });
+  it('should succeed when given a year', async () => {
+    await Visual.destroy({ where: {}, truncate: true, cascade: true });
+    await Document.destroy({ where: {}, truncate: true });
     const visual = await Visual.create({
       name: 'test',
       title: 'Test Visual',
@@ -36,25 +36,28 @@ describe('test document API route', () => {
       },
     });
     // App is used with supertest to simulate server request
-    const response = await supertest(app).get(`/document/${document.ssid}`).expect(200);
+    const response = await supertest(app).get(`/documents?year=1950`).expect(200);
 
-    expect(response.body).toMatchObject({
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          properties: {
-            ...omit(document.dataValues, 'Visual', 'VisualId', 'createdAt', 'updatedAt', 'geom'),
-            type: visual.title,
-          },
-          geometry: document.geom,
-        },
-      ],
-    });
+    expect(response.body).toMatchObject([
+      {
+        id: visual.id,
+        title: 'Test Visual',
+        Documents: [
+          pick(document.dataValues, [
+            'ssid',
+            'title',
+            'latitude',
+            'longitude',
+            'firstyear',
+            'lastyear',
+          ]),
+        ],
+      },
+    ]);
   });
 
   it('should fail when accessing a route without an ID', async () => {
-    const response = await supertest(app).get('/document').expect(404);
+    const response = await supertest(app).get('/documents').expect(404);
 
     expect(response.status).toEqual(404);
   });
