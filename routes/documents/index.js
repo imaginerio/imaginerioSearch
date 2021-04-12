@@ -1,8 +1,9 @@
-const { Visual, Sequelize } = require('../models');
+const { Visual, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/documents', (req, res) => {
     const { year } = req.query;
+    if (!year) return res.sendStatus(404);
     let where = {};
     if (year) {
       where = {

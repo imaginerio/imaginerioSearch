@@ -1,5 +1,5 @@
 const { omit } = require('lodash');
-const { Document, Sequelize } = require('../models');
+const { Document, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/document/:id', (req, res) =>

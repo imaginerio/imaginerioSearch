@@ -1,4 +1,4 @@
-const { Feature, Sequelize } = require('../models');
+const { Feature, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/feature/:id', (req, res) => {

@@ -14,7 +14,16 @@
 			"previewLimit": 50,
 			"server": "localhost",
 			"port": 5432,
-			"database": "postgres",
+			"database": "imagineriosearch",
+			"username": "postgres",
+			"password": "postgres"
+		},{
+			"name": "Test database",
+			"driver": "PostgreSQL",
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 5432,
+			"database": "imagineriotest",
 			"username": "postgres",
 			"password": "postgres"
 		}]
