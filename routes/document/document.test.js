@@ -5,14 +5,15 @@ const { sequelize, Visual, Document } = require('../../models');
 const app = require('../../server');
 
 describe('test document API route', () => {
-  it('should succeed when accessing a valid document', async () => {
-    await Visual.destroy({ where: {} });
-    await Document.destroy({ where: {} });
-    const visual = await Visual.create({
+  let visual;
+  let document;
+
+  beforeAll(async () => {
+    visual = await Visual.create({
       name: 'test',
       title: 'Test Visual',
     });
-    const document = await Document.create({
+    document = await Document.create({
       id: faker.datatype.uuid(),
       ssid: `SSID${faker.datatype.number(999999)}`,
       title: faker.lorem.words(3),
@@ -35,6 +36,9 @@ describe('test document API route', () => {
         ],
       },
     });
+  });
+
+  it('should succeed when accessing a valid document', async () => {
     // App is used with supertest to simulate server request
     const response = await supertest(app).get(`/document/${document.ssid}`).expect(200);
 
@@ -61,6 +65,9 @@ describe('test document API route', () => {
 
   // After all tersts have finished, close the DB connection
   afterAll(async () => {
+    await Visual.destroy({ where: {}, truncate: true, cascade: true });
+    await Document.destroy({ where: {}, truncate: true });
+
     await sequelize.close();
   });
 });

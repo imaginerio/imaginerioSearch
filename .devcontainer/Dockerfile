@@ -22,5 +22,5 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
 
 # [Optional] Uncomment if you want to install more global node packages
-RUN sudo -u node npm install -g sequelize-cli nodemon
+RUN sudo -u node npm install -g sequelize-cli nodemon jest-cli
 
