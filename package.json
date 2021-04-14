@@ -22,8 +22,10 @@
     "express-rate-limit": "^5.2.3",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
+    "ora": "^5.4.0",
     "pg": "^8.5.1",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "wellknown": "^0.5.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
