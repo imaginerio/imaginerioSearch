@@ -67,9 +67,6 @@ describe('test document API route', () => {
 
   // After all tersts have finished, close the DB connection
   afterAll(async () => {
-    await Visual.destroy({ where: {}, truncate: true, cascade: true });
-    await Document.destroy({ where: {}, truncate: true });
-
     await sequelize.close();
   });
 });

@@ -76,9 +76,6 @@ describe('test feature API route', () => {
   });
 
   afterAll(async () => {
-    await Layer.destroy({ where: {}, truncate: true, cascade: true });
-    await Feature.destroy({ where: {}, truncate: true, cascade: true });
-
     await sequelize.close();
   });
 });

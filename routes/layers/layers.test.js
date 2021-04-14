@@ -31,9 +31,10 @@ describe('test layers API route', () => {
 
   it('should return layers and types for a given year', async () => {
     const response = await supertest(app).get('/layers?year=1950').expect(200);
-    expect(response.body).toMatchObject([
-      { ...pick(layer.dataValues, 'id', 'name', 'title'), types: [feature.type] },
-    ]);
+    expect(response.body).toContainEqual({
+      ...pick(layer.dataValues, 'id', 'name', 'title'),
+      types: [feature.type],
+    });
   });
 
   it('should fail when accessing a route without a year', async () => {
@@ -44,9 +45,6 @@ describe('test layers API route', () => {
 
   // After all tersts have finished, close the DB connection
   afterAll(async () => {
-    await Layer.destroy({ where: {}, truncate: true, cascade: true });
-    await Feature.destroy({ where: {}, truncate: true, cascade: true });
-
     await sequelize.close();
   });
 });
