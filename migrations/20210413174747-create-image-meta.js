@@ -20,10 +20,10 @@ module.exports = {
         allowNull: false,
       },
       value: {
-        type: Sequelize.TEXT,
+        type: Sequelize.ARRAY(Sequelize.TEXT),
       },
       link: {
-        type: Sequelize.TEXT,
+        type: Sequelize.ARRAY(Sequelize.TEXT),
       },
       language: {
         type: Sequelize.STRING,

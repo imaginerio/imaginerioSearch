@@ -16,8 +16,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         unique: 'documentMetaLabel',
       },
-      value: DataTypes.TEXT,
-      link: DataTypes.TEXT,
+      value: DataTypes.ARRAY(DataTypes.TEXT),
+      link: DataTypes.ARRAY(DataTypes.TEXT),
       language: {
         type: DataTypes.STRING,
         unique: 'documentMetaLabel',

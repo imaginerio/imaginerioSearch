@@ -2,7 +2,7 @@
 require('dotenv').config();
 const md5 = require('md5');
 const axios = require('axios');
-const { isArray, isObject } = require('lodash');
+const { isArray, isObject, map } = require('lodash');
 const ora = require('ora');
 const wkt = require('wellknown');
 const { ImageMeta, Document, Visual, Sequelize } = require('../models');
@@ -26,13 +26,13 @@ const loadApi = (seeAlso, DocumentId) => {
     const meta = [];
     apiProps.forEach(prop => {
       if (data[prop]) {
-        data[prop].forEach(d => {
-          meta.push({
-            DocumentId,
-            label: `${d.property_label.charAt(0).toUpperCase()}${d.property_label.slice(1)}`,
-            value: d['o:label'],
-            link: d['@id'],
-          });
+        const [d] = data[prop];
+        const label = `${d.property_label.charAt(0).toUpperCase()}${d.property_label.slice(1)}`;
+        meta.push({
+          DocumentId,
+          label,
+          value: map(data[prop], 'o:label'),
+          link: map(data[prop], '@id'),
         });
       }
     });
@@ -49,7 +49,7 @@ const parseIIIF = (metadata, DocumentId) => {
         meta.push({
           DocumentId,
           label: m.label[lang][0],
-          value: m.value[lang][0],
+          value: m.value[lang],
           language: lang === 'none' ? null : lang,
         });
       });
