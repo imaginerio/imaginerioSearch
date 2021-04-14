@@ -2,6 +2,7 @@
 require('dotenv').config();
 const md5 = require('md5');
 const axios = require('axios');
+const { isArray, isObject } = require('lodash');
 const ora = require('ora');
 const wkt = require('wellknown');
 const { ImageMeta, Document, Visual, Sequelize } = require('../models');
@@ -11,7 +12,8 @@ const { IIIF, COLLECTIONS, ID_SECRET } = process.env;
 const apiProps = ['dcterms:hasVersion', 'dcterms:source', 'foaf:depicts'];
 
 const getSeeAlso = seeAlso => {
-  const link = seeAlso.find(s => s.id.match(IIIF));
+  if (!seeAlso || !isArray(seeAlso)) return null;
+  const link = seeAlso.find(s => s.id && s.id.match(IIIF));
   if (link) return link.id;
   return null;
 };
@@ -40,15 +42,18 @@ const loadApi = (seeAlso, DocumentId) => {
 
 const parseIIIF = (metadata, DocumentId) => {
   const meta = [];
+  if (!metadata || !isArray(metadata)) return null;
   metadata.forEach(m => {
-    Object.keys(m.label).forEach(lang => {
-      meta.push({
-        DocumentId,
-        label: m.label[lang][0],
-        value: m.value[lang][0],
-        language: lang === 'none' ? null : lang,
+    if (isObject(m)) {
+      Object.keys(m.label).forEach(lang => {
+        meta.push({
+          DocumentId,
+          label: m.label[lang][0],
+          value: m.value[lang][0],
+          language: lang === 'none' ? null : lang,
+        });
       });
-    });
+    }
   });
   return meta;
 };
@@ -57,7 +62,7 @@ const createDocument = async (seeAlso, collection) => {
   const link = getSeeAlso(seeAlso);
   if (!link) return Promise.resolve();
 
-  const { data } = await axios.get();
+  const { data } = await axios.get(link);
   const { data: mapping } = await axios.get(data['o-module-mapping:marker'][0]['@id']);
   const visual = await Visual.findOne({
     where: { title: { [Sequelize.Op.iLike]: collection } },
@@ -86,6 +91,7 @@ const loadManifest = (manifest, collection) =>
     )[0][0];
     let document = await Document.findOne({ where: { ssid }, attributes: ['id'], raw: true });
     if (!document) document = await createDocument(seeAlso, collection);
+    if (!document) return Promise.resolve();
     const meta = parseIIIF(metadata, document.id).filter(
       m => m.label !== 'Identifier' && m.label !== 'Depicts'
     );
