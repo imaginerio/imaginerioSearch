@@ -2,7 +2,7 @@
 require('dotenv').config();
 const md5 = require('md5');
 const axios = require('axios');
-const { isArray, isObject, map } = require('lodash');
+const { isArray, isObject, map, uniqBy } = require('lodash');
 const ora = require('ora');
 const wkt = require('wellknown');
 const { ImageMeta, Document, Visual, Sequelize } = require('../models');
@@ -36,7 +36,9 @@ const loadApi = (seeAlso, DocumentId) => {
         });
       }
     });
-    return ImageMeta.bulkCreate(meta, { updateOnDuplicate: ['value', 'link', 'updatedAt'] });
+    return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
+      updateOnDuplicate: ['value', 'link', 'updatedAt'],
+    });
   });
 };
 
@@ -102,9 +104,9 @@ const loadManifest = (manifest, collection) =>
       { DocumentId: document.id, label: 'Height', value: [items[0].height] },
     ];
 
-    return ImageMeta.bulkCreate(meta, { updateOnDuplicate: ['value', 'updatedAt'] }).then(() =>
-      loadApi(seeAlso, document.id)
-    );
+    return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
+      updateOnDuplicate: ['value', 'updatedAt'],
+    }).then(() => loadApi(seeAlso, document.id));
   });
 
 const loadCollection = collection => {
