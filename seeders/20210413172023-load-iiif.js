@@ -50,7 +50,7 @@ const parseIIIF = (metadata, DocumentId) => {
           DocumentId,
           label: m.label[lang][0],
           value: m.value[lang],
-          language: lang === 'none' ? null : lang,
+          language: lang,
         });
       });
     }
@@ -85,16 +85,23 @@ const createDocument = async (seeAlso, collection) => {
 };
 
 const loadManifest = (manifest, collection) =>
-  axios.get(manifest).then(async ({ data: { metadata, seeAlso } }) => {
+  axios.get(manifest).then(async ({ data: { metadata, seeAlso, items } }) => {
     const ssid = Object.values(
       metadata.find(m => Object.values(m.label)[0][0] === 'Identifier').value
     )[0][0];
     let document = await Document.findOne({ where: { ssid }, attributes: ['id'], raw: true });
     if (!document) document = await createDocument(seeAlso, collection);
     if (!document) return Promise.resolve();
-    const meta = parseIIIF(metadata, document.id).filter(
+    let meta = parseIIIF(metadata, document.id).filter(
       m => m.label !== 'Identifier' && m.label !== 'Depicts'
     );
+
+    meta = [
+      ...meta,
+      { DocumentId: document.id, label: 'Width', value: [items[0].width] },
+      { DocumentId: document.id, label: 'Height', value: [items[0].height] },
+    ];
+
     return ImageMeta.bulkCreate(meta, { updateOnDuplicate: ['value', 'updatedAt'] }).then(() =>
       loadApi(seeAlso, document.id)
     );
