@@ -1,4 +1,4 @@
-const { omit } = require('lodash');
+const { omit, isArray } = require('lodash');
 const { Visual, Sequelize } = require('../../models');
 
 module.exports = router => {
@@ -46,7 +46,7 @@ module.exports = router => {
             const document = omit(d.dataValues, 'ImageMeta');
             d.ImageMeta.forEach(meta => {
               let value = meta.value.length > 1 ? meta.value : meta.value[0];
-              if (value.match(/^-?\d+\.?\d*$/)) value = parseFloat(value);
+              if (!isArray(value) && value.match(/^-?\d+\.?\d*$/)) value = parseFloat(value);
               const link = !meta.link || meta.link.length > 1 ? meta.link : meta.link[0];
               const [label] = meta.label.split(' ');
               document[label.toLowerCase()] = link ? { value, link } : value;
