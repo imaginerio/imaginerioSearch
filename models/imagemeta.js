@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       language: {
         type: DataTypes.STRING,
         unique: 'documentMetaLabel',
+        defaultValue: 'none',
       },
     },
     {
