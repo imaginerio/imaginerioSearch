@@ -1,5 +1,4 @@
 const supertest = require('supertest');
-const faker = require('faker');
 const { pick } = require('lodash');
 const { sequelize, Layer, Feature } = require('../../models');
 const app = require('../../server');
@@ -13,7 +12,7 @@ describe('test layers API route', () => {
       title: 'Test Layer',
     });
     feature = await Feature.create({
-      id: faker.datatype.uuid(),
+      id: 'layers.test.1',
       name: 'Feature 1',
       firstyear: 1900,
       lastyear: 2000,
