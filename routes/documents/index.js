@@ -1,5 +1,6 @@
-const { omit, isArray } = require('lodash');
+const { omit } = require('lodash');
 const { Visual, Sequelize } = require('../../models');
+const { attachImageMeta } = require('../../utils/attachImageMeta');
 
 module.exports = router => {
   router.get('/documents', (req, res) => {
@@ -42,17 +43,10 @@ module.exports = router => {
         .filter(l => l.Documents.length)
         .map(l => ({
           ...l.dataValues,
-          Documents: l.Documents.map(d => {
-            const document = omit(d.dataValues, 'ImageMeta');
-            d.ImageMeta.forEach(meta => {
-              let value = meta.value.length > 1 ? meta.value : meta.value[0];
-              if (!isArray(value) && value.match(/^-?\d+\.?\d*$/)) value = parseFloat(value);
-              const link = !meta.link || meta.link.length > 1 ? meta.link : meta.link[0];
-              const [label] = meta.label.split(' ');
-              document[label.toLowerCase()] = link ? { value, link } : value;
-            });
-            return document;
-          }),
+          Documents: l.Documents.map(d => ({
+            ...omit(d.dataValues, 'ImageMeta'),
+            ...attachImageMeta(d.ImageMeta),
+          })),
         }));
       return res.send(response);
     });
