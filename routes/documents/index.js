@@ -45,11 +45,10 @@ module.exports = router => {
           Documents: l.Documents.map(d => {
             const document = omit(d.dataValues, 'ImageMeta');
             d.ImageMeta.forEach(meta => {
-              const parsedMeta = {
-                value: meta.value.length > 1 ? meta.value : meta.value[0],
-                link: !meta.link || meta.link.length > 1 ? meta.link : meta.link[0],
-              };
-              document[meta.label.toLowerCase()] = meta.link ? parsedMeta : parsedMeta.value;
+              let value = meta.value.length > 1 ? meta.value : meta.value[0];
+              if (value.match(/^-?\d+\.?\d*$/)) value = parseFloat(value);
+              const link = !meta.link || meta.link.length > 1 ? meta.link : meta.link[0];
+              document[meta.label.toLowerCase()] = link ? { value, link } : value;
             });
             return document;
           }),
