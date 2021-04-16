@@ -72,7 +72,7 @@ const createDocument = async (seeAlso, collection) => {
   });
   const ssid = data['dcterms:identifier'][0]['@value'];
   const temporal = data['dcterms:temporal'] || data['dcterms:available'];
-  if (!temporal) return Promise.resolve();
+  if (!temporal || !data['schema:polygon']) return Promise.resolve();
   const [firstyear, lastyear] = temporal[0]['@value'].split('/');
   return Document.create({
     id: md5(`${ID_SECRET}${ssid}`),
