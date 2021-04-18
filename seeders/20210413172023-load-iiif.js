@@ -1,15 +1,16 @@
 /* eslint-disable no-console */
 require('dotenv').config();
-const md5 = require('md5');
 const axios = require('axios');
 const { isArray, isObject, map, uniqBy } = require('lodash');
 const ora = require('ora');
-const wkt = require('wellknown');
 const { ImageMeta, Document, Visual, Sequelize } = require('../models');
 
-const { IIIF, COLLECTIONS, ID_SECRET } = process.env;
+const { IIIF, COLLECTIONS } = process.env;
 
 const apiProps = ['dcterms:hasVersion', 'dcterms:source', 'foaf:depicts'];
+
+let loadsComplete = 0;
+let loadsSkipped = 0;
 
 const getSeeAlso = seeAlso => {
   if (!seeAlso || !isArray(seeAlso)) return null;
@@ -60,40 +61,8 @@ const parseIIIF = (metadata, DocumentId) => {
   return meta;
 };
 
-const createDocument = async (seeAlso, collection) => {
-  const link = getSeeAlso(seeAlso);
-  if (!link) return Promise.resolve();
-
-  const { data } = await axios.get(link);
-  const { data: mapping } = await axios.get(data['o-module-mapping:marker'][0]['@id']);
-  const visual = await Visual.findOne({
-    where: { title: { [Sequelize.Op.iLike]: collection } },
-    attributes: ['id'],
-  });
-  const ssid = data['dcterms:identifier'][0]['@value'];
-  const temporal = data['dcterms:temporal'] || data['dcterms:available'];
-  if (!temporal || !data['schema:polygon']) return Promise.resolve();
-  const [firstyear, lastyear] = temporal[0]['@value'].split('/');
-  return Document.create({
-    id: md5(`${ID_SECRET}${ssid}`),
-    ssid,
-    firstyear,
-    lastyear,
-    VisualId: visual.id,
-    latitude: mapping['o-module-mapping:lat'],
-    longitude: mapping['o-module-mapping:lng'],
-    geom: wkt(data['schema:polygon'][0]['@value']),
-  });
-};
-
-const loadManifest = (manifest, collection) =>
+const loadManifest = (manifest, document) =>
   axios.get(manifest).then(async ({ data: { metadata, seeAlso, items } }) => {
-    const ssid = Object.values(
-      metadata.find(m => Object.values(m.label)[0][0] === 'Identifier').value
-    )[0][0];
-    let document = await Document.findOne({ where: { ssid }, attributes: ['id'], raw: true });
-    if (!document) document = await createDocument(seeAlso, collection);
-    if (!document) return Promise.resolve();
     let meta = parseIIIF(metadata, document.id).filter(
       m => m.label !== 'Identifier' && m.label !== 'Depicts'
     );
@@ -106,19 +75,46 @@ const loadManifest = (manifest, collection) =>
 
     return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
       updateOnDuplicate: ['value', 'updatedAt'],
-    }).then(() => loadApi(seeAlso, document.id));
+    }).then(() => {
+      loadsComplete += 1;
+      return loadApi(seeAlso, document.id);
+    });
   });
 
 const loadCollection = collection => {
+  loadsComplete = 0;
+  loadsSkipped = 0;
   const spinner = ora(`Loading ${collection}...`).start();
   return axios.get(`${IIIF}/iiif/3/collection/${collection}`).then(({ data: { items } }) =>
     items
       .reduce(async (previousPromise, { id: manifest }, i) => {
         await previousPromise;
         spinner.text = `Loading ${collection} ${i + 1} / ${items.length}`;
-        return loadManifest(manifest, collection);
+        const ssid = manifest.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1');
+        const document = await Document.findOne({ where: { ssid }, attributes: ['id'], raw: true });
+        if (!document) {
+          loadsSkipped += 1;
+          return Promise.resolve();
+        }
+        return loadManifest(manifest, document);
       })
-      .then(() => spinner.succeed())
+      .then(async () => {
+        const visual = await Visual.findOne({
+          where: { title: { [Sequelize.Op.iLike]: collection } },
+          attributes: ['id'],
+        });
+        const itemsRemoved = await Document.destroy({
+          where: {
+            ssid: {
+              [Sequelize.Op.notIn]: items.map(i => i.id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1')),
+            },
+            VisualId: visual.id,
+          },
+        });
+        return spinner.succeed(
+          `${loadsComplete} items imported / ${loadsSkipped} items skipped / ${itemsRemoved} items removed`
+        );
+      })
   );
 };
 

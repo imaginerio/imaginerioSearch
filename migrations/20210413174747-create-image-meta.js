@@ -14,6 +14,8 @@ module.exports = {
           model: 'Documents',
           key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       label: {
         type: Sequelize.TEXT,
