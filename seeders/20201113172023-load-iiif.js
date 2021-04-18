@@ -81,11 +81,14 @@ const loadManifest = (manifest, document) =>
     });
   });
 
-const deleteNoIIIFDocuments = async (collection, items) => {
+const deleteNoIIIFDocuments = async collection => {
   const visual = await Visual.findOne({
     where: { title: { [Sequelize.Op.iLike]: collection } },
     attributes: ['id'],
   });
+  const {
+    data: { items },
+  } = await axios.get(`${IIIF}/iiif/3/collection/${collection}`);
   return Document.destroy({
     where: {
       ssid: {
@@ -93,7 +96,7 @@ const deleteNoIIIFDocuments = async (collection, items) => {
       },
       VisualId: visual.id,
     },
-  });
+  }).then(deleted => console.log(`${deleted} items deleted from ${collection}`));
 };
 
 const loadCollection = collection => {
@@ -113,19 +116,17 @@ const loadCollection = collection => {
         }
         return loadManifest(manifest, document);
       })
-      .then(async () => {
-        const itemsRemoved = await deleteNoIIIFDocuments(collection, items);
-        return spinner.succeed(
-          `${loadsComplete} items imported / ${loadsSkipped} items skipped / ${itemsRemoved} items removed`
-        );
-      })
+      .then(async () =>
+        spinner.succeed(`${loadsComplete} items imported / ${loadsSkipped} items skipped`)
+      )
   );
 };
 
 module.exports = {
   up: async () => {
     if (!IIIF || !COLLECTIONS) return null;
-
+    const collections = JSON.parse(COLLECTIONS);
+    await Promise.all(collections.map(deleteNoIIIFDocuments));
     return JSON.parse(COLLECTIONS).reduce(async (previousPromise, collection) => {
       await previousPromise;
       return loadCollection(collection);
