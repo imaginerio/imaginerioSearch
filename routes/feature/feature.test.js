@@ -1,5 +1,4 @@
 const supertest = require('supertest');
-const faker = require('faker');
 const { pick } = require('lodash');
 const { sequelize, Layer, Feature } = require('../../models');
 const app = require('../../server');
@@ -23,7 +22,7 @@ describe('test feature API route', () => {
     features = [
       await Feature.create({
         ...attributes,
-        id: faker.datatype.uuid(),
+        id: 'feature.test.1',
         geom: {
           type: 'LineString',
           coordinates: [
@@ -34,7 +33,7 @@ describe('test feature API route', () => {
       }),
       await Feature.create({
         ...attributes,
-        id: faker.datatype.uuid(),
+        id: 'feature.test.2',
         geom: {
           type: 'LineString',
           coordinates: [
@@ -76,9 +75,6 @@ describe('test feature API route', () => {
   });
 
   afterAll(async () => {
-    await Layer.destroy({ where: {}, truncate: true, cascade: true });
-    await Feature.destroy({ where: {}, truncate: true, cascade: true });
-
     await sequelize.close();
   });
 });
