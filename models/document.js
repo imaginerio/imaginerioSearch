@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Document extends Model {
     static associate(models) {
       Document.belongsTo(models.Visual);
+      Document.hasMany(models.ImageMeta);
     }
   }
   Document.init(

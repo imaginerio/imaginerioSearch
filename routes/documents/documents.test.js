@@ -59,17 +59,8 @@ describe('test document API route', () => {
     ]);
   });
 
-  it('should fail when accessing a route without an ID', async () => {
-    const response = await supertest(app).get('/documents').expect(404);
-
-    expect(response.status).toEqual(404);
-  });
-
   // After all tersts have finished, close the DB connection
   afterAll(async () => {
-    await Visual.destroy({ where: {}, truncate: true, cascade: true });
-    await Document.destroy({ where: {}, truncate: true });
-
     await sequelize.close();
   });
 });

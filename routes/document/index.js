@@ -18,7 +18,7 @@ module.exports = router => {
           {
             type: 'Feature',
             properties: {
-              ...omit(document.dataValues, 'Visual', 'VisualId', 'geom'),
+              ...omit(document.dataValues, 'Visual', 'VisualId', 'geom', 'updatedAt', 'createdAt'),
               type: document.Visual.title,
             },
             geometry: document.geom,
