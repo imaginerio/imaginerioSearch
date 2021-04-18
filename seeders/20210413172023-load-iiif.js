@@ -81,6 +81,21 @@ const loadManifest = (manifest, document) =>
     });
   });
 
+const deleteNoIIIFDocuments = async (collection, items) => {
+  const visual = await Visual.findOne({
+    where: { title: { [Sequelize.Op.iLike]: collection } },
+    attributes: ['id'],
+  });
+  return Document.destroy({
+    where: {
+      ssid: {
+        [Sequelize.Op.notIn]: items.map(i => i.id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1')),
+      },
+      VisualId: visual.id,
+    },
+  });
+};
+
 const loadCollection = collection => {
   loadsComplete = 0;
   loadsSkipped = 0;
@@ -99,18 +114,7 @@ const loadCollection = collection => {
         return loadManifest(manifest, document);
       })
       .then(async () => {
-        const visual = await Visual.findOne({
-          where: { title: { [Sequelize.Op.iLike]: collection } },
-          attributes: ['id'],
-        });
-        const itemsRemoved = await Document.destroy({
-          where: {
-            ssid: {
-              [Sequelize.Op.notIn]: items.map(i => i.id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1')),
-            },
-            VisualId: visual.id,
-          },
-        });
+        const itemsRemoved = await deleteNoIIIFDocuments(collection, items);
         return spinner.succeed(
           `${loadsComplete} items imported / ${loadsSkipped} items skipped / ${itemsRemoved} items removed`
         );
