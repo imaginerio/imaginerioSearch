@@ -34,6 +34,7 @@
 		"dbaeumer.vscode-eslint",
 		"mtxr.sqltools",
 		"mtxr.sqltools-driver-pg",
+		"github.vscode-pull-request-github",
 		"ponicode.ponicode"
 	],
 
