@@ -19,7 +19,7 @@ const getSeeAlso = seeAlso => {
   return null;
 };
 
-const loadApi = (seeAlso, DocumentId) => {
+const loadApi = (seeAlso, document) => {
   const link = getSeeAlso(seeAlso);
   if (!link) return Promise.resolve();
 
@@ -30,7 +30,7 @@ const loadApi = (seeAlso, DocumentId) => {
         const [d] = data[prop];
         const label = `${d.property_label.charAt(0).toUpperCase()}${d.property_label.slice(1)}`;
         meta.push({
-          DocumentId,
+          DocumentId: document.id,
           label,
           value: map(data[prop], 'o:label'),
           link: map(data[prop], '@id'),
@@ -39,6 +39,10 @@ const loadApi = (seeAlso, DocumentId) => {
     });
     return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
       updateOnDuplicate: ['value', 'link', 'updatedAt'],
+    }).then(() => {
+      // eslint-disable-next-line no-param-reassign
+      document.thumbnail = data.thumbnail_display_urls.large;
+      return document.save();
     });
   });
 };
@@ -77,7 +81,7 @@ const loadManifest = (manifest, document) =>
       updateOnDuplicate: ['value', 'updatedAt'],
     }).then(() => {
       loadsComplete += 1;
-      return loadApi(seeAlso, document.id);
+      return loadApi(seeAlso, document);
     });
   });
 
@@ -109,7 +113,7 @@ const loadCollection = collection => {
         await previousPromise;
         spinner.text = `Loading ${collection} ${i + 1} / ${items.length}`;
         const ssid = manifest.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1');
-        const document = await Document.findOne({ where: { ssid }, attributes: ['id'], raw: true });
+        const document = await Document.findOne({ where: { ssid }, attributes: ['id'] });
         if (!document) {
           loadsSkipped += 1;
           return Promise.resolve();
