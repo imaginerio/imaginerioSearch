@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const faker = require('faker');
+const { v4: uuidv4 } = require('uuid');
 const { pick } = require('lodash');
 const { sequelize, Visual, Document } = require('../../models');
 const app = require('../../server');
@@ -14,8 +15,8 @@ describe('test document API route', () => {
     });
 
     document = await Document.create({
-      id: faker.datatype.uuid(),
-      ssid: `SSID${faker.datatype.number(999999)}`,
+      id: uuidv4(),
+      ssid: uuidv4(),
       title: faker.lorem.words(3),
       creator: `${faker.name.firstName()} ${faker.name.lastName()}`,
       firstyear: 1900,
@@ -41,22 +42,20 @@ describe('test document API route', () => {
   it('should succeed when given a year', async () => {
     // App is used with supertest to simulate server request
     const response = await supertest(app).get(`/documents?year=1950`).expect(200);
-    expect(response.body).toMatchObject([
-      {
-        id: visual.id,
-        title: 'Test Visual',
-        Documents: [
-          pick(document.dataValues, [
-            'ssid',
-            'title',
-            'latitude',
-            'longitude',
-            'firstyear',
-            'lastyear',
-          ]),
-        ],
-      },
-    ]);
+    expect(response.body).toContainEqual({
+      id: visual.id,
+      title: 'Test Visual',
+      Documents: [
+        pick(document.dataValues, [
+          'ssid',
+          'title',
+          'latitude',
+          'longitude',
+          'firstyear',
+          'lastyear',
+        ]),
+      ],
+    });
   });
 
   // After all tersts have finished, close the DB connection

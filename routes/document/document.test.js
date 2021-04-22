@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const faker = require('faker');
+const { v4: uuidv4 } = require('uuid');
 const { omit } = require('lodash');
 const { sequelize, Visual, Document } = require('../../models');
 const app = require('../../server');
@@ -14,8 +15,8 @@ describe('test document API route', () => {
       title: 'Test Visual',
     });
     document = await Document.create({
-      id: faker.datatype.uuid(),
-      ssid: `SSID${faker.datatype.number(999999)}`,
+      id: uuidv4(),
+      ssid: uuidv4(),
       title: faker.lorem.words(3),
       creator: `${faker.name.firstName()} ${faker.name.lastName()}`,
       firstyear: 1900,
