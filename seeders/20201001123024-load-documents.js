@@ -31,7 +31,7 @@ module.exports = {
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const featureLoader = features.map(feature => {
-            const ssid = `SSID${
+            const ssid = `${
               feature.properties.notes && feature.properties.notes.match(/^\d+$/)
                 ? feature.properties.notes
                 : feature.properties.ss_id

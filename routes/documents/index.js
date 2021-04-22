@@ -31,7 +31,15 @@ module.exports = router => {
       where: visualWhere,
       include: {
         association: 'Documents',
-        attributes: ['ssid', 'title', 'latitude', 'longitude', 'firstyear', 'lastyear'],
+        attributes: [
+          'ssid',
+          'title',
+          'latitude',
+          'longitude',
+          'firstyear',
+          'lastyear',
+          'thumbnail',
+        ],
         where,
         include: {
           association: 'ImageMeta',

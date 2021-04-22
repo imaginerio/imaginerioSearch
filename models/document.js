@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       artstor: DataTypes.TEXT,
       firstyear: DataTypes.INTEGER,
       lastyear: DataTypes.INTEGER,
+      thumbnail: DataTypes.TEXT,
       VisualId: DataTypes.INTEGER,
       latitude: DataTypes.FLOAT,
       longitude: DataTypes.FLOAT,

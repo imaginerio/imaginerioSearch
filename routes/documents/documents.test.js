@@ -21,6 +21,7 @@ describe('test document API route', () => {
       creator: `${faker.name.firstName()} ${faker.name.lastName()}`,
       firstyear: 1900,
       lastyear: 2000,
+      thumbnail: faker.internet.url(),
       VisualId: visual.id,
       latitude: faker.datatype.float({ min: -90, max: 90 }),
       longitude: faker.datatype.float({ min: -180, max: 180 }),
@@ -53,6 +54,7 @@ describe('test document API route', () => {
           'longitude',
           'firstyear',
           'lastyear',
+          'thumbnail',
         ]),
       ],
     });
