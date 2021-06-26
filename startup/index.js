@@ -49,5 +49,5 @@ module.exports.default = () =>
 
 if (require.main === module)
   executeMigrations('migrations', 'SequelizeMeta').then(() =>
-    executeMigrations('seeders', 'SequelizeData')
+    executeMigrations('seeders')
   );
