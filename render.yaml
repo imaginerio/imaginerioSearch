@@ -24,7 +24,7 @@ services:
     region: oregon
     env: node
     buildCommand: yarn
-    startCommand: yarn db:migrate:reset
+    startCommand: yarn db:job
     schedule: "1 0 * * 6" 
     envVars:
       - fromGroup: tile-generator
