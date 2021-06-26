@@ -10,7 +10,7 @@
     "test": "cross-env NODE_ENV=test npx sequelize-cli db:migrate:undo:all && cross-env NODE_ENV=test yarn db:migrate && cross-env NODE_ENV=test yarn jest",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
-    "db:job": "node startup",
+    "db:job": "yarn db:migrate && node startup",
     "db:migrate:reset": "npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed"
   },
   "dependencies": {

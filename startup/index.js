@@ -47,7 +47,6 @@ const executeMigrations = async (dir, table) => {
 module.exports.default = () =>
   executeMigrations('migrations', 'SequelizeMeta').then(() => executeMigrations('seeders'));
 
-if (require.main === module)
-  executeMigrations('migrations', 'SequelizeMeta').then(() =>
-    executeMigrations('seeders')
-  );
+if (require.main === module) {
+  executeMigrations('seeders');
+}
