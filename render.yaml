@@ -18,6 +18,23 @@ services:
           name: imaginerio
           property: connectionString
   - type: cron
+    name: imaginerio-search
+    region: oregon
+    env: node
+    buildCommand: yarn
+    startCommand: yarn db:migrate:reset
+    schedule: "1 0 * * 6" 
+    envVars:
+      - fromGroup: tile-generator
+      - key: DATABASE
+        value: imagineRio
+      - key: IIIF
+        value: https://images.imaginerio.org
+      - key: DB_URL
+        fromDatabase:
+          name: imaginerio
+          property: connectionString
+  - type: cron
     name: vector-tile-generator
     region: oregon
     env: docker
