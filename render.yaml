@@ -18,7 +18,7 @@ services:
           name: imaginerio
           property: connectionString
   - type: cron
-    name: imaginerio-search
+    name: imaginerio-database-seeder
     region: oregon
     env: node
     buildCommand: yarn
