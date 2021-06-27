@@ -39,7 +39,7 @@ services:
           name: imaginerio
           property: connectionString
   - type: cron
-    name: vector-tile-generator
+    name: imaginerio-vector-tile-generator
     region: oregon
     env: docker
     schedule: "1 0 * * 6" 
