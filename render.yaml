@@ -28,6 +28,7 @@ services:
     schedule: "1 0 * * 6" 
     envVars:
       - fromGroup: tile-generator
+      - fromGroup: imaginerio-search
       - key: DATABASE
         value: imagineRio
       - key: IIIF

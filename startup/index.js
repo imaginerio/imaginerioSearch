@@ -4,6 +4,7 @@
 /* eslint-disable no-console */
 const fs = require('fs').promises;
 const path = require('path');
+const axios = require('axios');
 const { sequelize, Sequelize } = require('../models');
 
 const executeMigrations = async (dir, table) => {
@@ -48,5 +49,10 @@ module.exports.default = () =>
   executeMigrations('migrations', 'SequelizeMeta').then(() => executeMigrations('seeders'));
 
 if (require.main === module) {
-  executeMigrations('seeders');
+  executeMigrations('seeders').then(() => {
+    if (process.env.DEPLOY_HOOK) {
+      return axios.post(process.env.DEPLOY_HOOK).then(({ data }) => console.log(data));
+    }
+    return Promise.resolve();
+  });
 }
