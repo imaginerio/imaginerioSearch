@@ -23,6 +23,6 @@ routes.forEach(route => {
   require(path.join(__dirname, 'routes', route))(app);
 });
 
-if (process.env.NODE_ENV === 'production') startup();
+if (process.env.STARTUP) startup();
 
 module.exports = app;
