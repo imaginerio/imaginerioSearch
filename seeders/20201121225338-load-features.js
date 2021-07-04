@@ -91,3 +91,5 @@ module.exports = {
   down: async queryInterface =>
     queryInterface.bulkDelete('Features').then(() => queryInterface.bulkDelete('Layers')),
 };
+
+if (require.main === module) module.exports.up();

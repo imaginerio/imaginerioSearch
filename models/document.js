@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       VisualId: DataTypes.INTEGER,
       latitude: DataTypes.FLOAT,
       longitude: DataTypes.FLOAT,
+      heading: DataTypes.FLOAT,
       geom: DataTypes.GEOMETRY,
     },
     {

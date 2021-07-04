@@ -11,10 +11,10 @@ const { Visual, Document, Sequelize } = require('../models');
 
 const STEP = 500;
 const visual = [
+  'ViewConesPoly',
   'AerialExtentsPoly',
   'PlanExtentsPoly',
   'MapExtentsPoly',
-  'ViewConesPoly',
   'SurveyExtentsPoly',
 ];
 
@@ -64,6 +64,7 @@ module.exports = {
               'lastyear',
               'latitude',
               'longitude',
+              'heading',
               'VisualId',
               'geom',
               'updatedAt',
@@ -119,3 +120,5 @@ module.exports = {
   down: async queryInterface =>
     queryInterface.bulkDelete('Visuals').then(() => queryInterface.bulkDelete('Documents')),
 };
+
+if (require.main === module) module.exports.up();

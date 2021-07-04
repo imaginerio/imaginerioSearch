@@ -139,3 +139,5 @@ module.exports = {
 
   down: queryInterface => queryInterface.bulkDelete('ImageMeta'),
 };
+
+if (require.main === module) module.exports.up();
