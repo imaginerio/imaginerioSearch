@@ -7,6 +7,7 @@ services:
     healthCheckPath: /layers
     buildCommand: yarn
     startCommand: yarn start
+    initialDeployHook: yarn db:job
     envVars:
       - fromGroup: tile-generator
       - key: DATABASE
