@@ -4,6 +4,7 @@ const axios = require('axios');
 const { isArray, isObject, map, uniqBy } = require('lodash');
 const ora = require('ora');
 const { ImageMeta, Document, Visual, Sequelize } = require('../models');
+const { fixEncoding } = require('../utils/fixEncoding');
 
 const { IIIF, COLLECTIONS } = process.env;
 
@@ -32,7 +33,7 @@ const loadApi = (seeAlso, document) => {
         meta.push({
           DocumentId: document.id,
           label,
-          value: map(data[prop], 'o:label'),
+          value: map(data[prop], 'o:label').map(fixEncoding),
           link: map(data[prop], '@id'),
         });
       }
@@ -56,7 +57,7 @@ const parseIIIF = (metadata, DocumentId) => {
         meta.push({
           DocumentId,
           label: m.label[lang][0],
-          value: m.value[lang],
+          value: m.value[lang].map(fixEncoding),
           language: lang,
         });
       });

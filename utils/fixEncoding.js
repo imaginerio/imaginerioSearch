@@ -8,14 +8,13 @@ const htmlCodes = {
   '&amp;': '&',
   '&amp,': '&',
   ',amp;': '&',
-  'd&#039;': '&',
-  '<br />\n': ' ',
+  '<br \\/>\n': ' ',
 };
 
 exports.fixEncoding = text => {
   let cleaned = text;
   Object.keys(htmlCodes).forEach(code => {
-    cleaned = cleaned.replace(new RegExp(code, 'g'), htmlCodes[code]);
+    cleaned = cleaned.replace(new RegExp(code, 'gm'), htmlCodes[code]);
   });
   return cleaned;
 };
