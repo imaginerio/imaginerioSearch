@@ -17,7 +17,7 @@ module.exports = router => {
             [Sequelize.Op.gte]: parseInt(year, 10),
           },
           [Sequelize.Op.or]: [
-            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('name')), {
+            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('Features.name')), {
               [Sequelize.Op.iLike]: `%${text}%`,
             }),
             Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('namealt')), {
@@ -25,7 +25,6 @@ module.exports = router => {
             }),
           ],
         },
-        limit: 5,
       },
     }).then(layers => res.send(layers.filter(l => l.Features.length)));
   });
