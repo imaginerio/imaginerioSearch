@@ -117,12 +117,12 @@ const loadCollection = collection => {
         spinner.text = `Loading ${collection} ${i + 1} / ${items.length}`;
         const ssid = manifest.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1');
         const document = await Document.findOne({ where: { ssid }, attributes: ['id'] });
-        const metaRecords = await document.getImageMeta();
-        await Promise.all(metaRecords.map(record => record.destroy()));
         if (!document) {
           loadsSkipped += 1;
           return Promise.resolve();
         }
+        const metaRecords = await document.getImageMeta();
+        await Promise.all(metaRecords.map(record => record.destroy()));
         return loadManifest(manifest, document);
       })
       .then(async () =>
