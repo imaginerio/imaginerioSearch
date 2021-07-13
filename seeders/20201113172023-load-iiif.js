@@ -4,6 +4,7 @@ const axios = require('axios');
 const { isArray, isObject, map, uniqBy } = require('lodash');
 const ora = require('ora');
 const { ImageMeta, Document, Visual, Sequelize } = require('../models');
+const { fixEncoding } = require('../utils/fixEncoding');
 
 const { IIIF, COLLECTIONS } = process.env;
 
@@ -32,13 +33,14 @@ const loadApi = (seeAlso, document) => {
         meta.push({
           DocumentId: document.id,
           label,
-          value: map(data[prop], 'o:label'),
+          value: map(data[prop], 'o:label').map(fixEncoding),
           link: map(data[prop], '@id'),
         });
       }
     });
     return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
-      updateOnDuplicate: ['value', 'link', 'updatedAt'],
+      individualHooks: true,
+      logging: console.log,
     }).then(() => {
       // eslint-disable-next-line no-param-reassign
       document.thumbnail = data.thumbnail_display_urls.large;
@@ -56,7 +58,7 @@ const parseIIIF = (metadata, DocumentId) => {
         meta.push({
           DocumentId,
           label: m.label[lang][0],
-          value: m.value[lang],
+          value: m.value[lang].map(fixEncoding),
           language: lang,
         });
       });
@@ -78,7 +80,8 @@ const loadManifest = (manifest, document) =>
     ];
 
     return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
-      updateOnDuplicate: ['value', 'updatedAt'],
+      individualHooks: true,
+      logging: console.log,
     }).then(() => {
       loadsComplete += 1;
       return loadApi(seeAlso, document);
@@ -118,6 +121,8 @@ const loadCollection = collection => {
           loadsSkipped += 1;
           return Promise.resolve();
         }
+        const metaRecords = await document.getImageMeta();
+        await Promise.all(metaRecords.map(record => record.destroy()));
         return loadManifest(manifest, document);
       })
       .then(async () =>

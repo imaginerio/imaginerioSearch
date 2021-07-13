@@ -1,4 +1,5 @@
 const { Model } = require('sequelize');
+const { fixEncoding } = require('../utils/fixEncoding');
 
 module.exports = (sequelize, DataTypes) => {
   class ImageMeta extends Model {
@@ -27,6 +28,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'ImageMeta',
+      hooks: {
+        beforeCreate: meta => {
+          // eslint-disable-next-line no-param-reassign
+          meta.value = meta.value.map(fixEncoding);
+        },
+      },
     }
   );
   return ImageMeta;
