@@ -39,7 +39,8 @@ const loadApi = (seeAlso, document) => {
       }
     });
     return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
-      updateOnDuplicate: ['value', 'link', 'updatedAt'],
+      individualHooks: true,
+      logging: console.log,
     }).then(() => {
       // eslint-disable-next-line no-param-reassign
       document.thumbnail = data.thumbnail_display_urls.large;
@@ -79,7 +80,8 @@ const loadManifest = (manifest, document) =>
     ];
 
     return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
-      updateOnDuplicate: ['value', 'updatedAt'],
+      individualHooks: true,
+      logging: console.log,
     }).then(() => {
       loadsComplete += 1;
       return loadApi(seeAlso, document);
@@ -115,6 +117,8 @@ const loadCollection = collection => {
         spinner.text = `Loading ${collection} ${i + 1} / ${items.length}`;
         const ssid = manifest.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1');
         const document = await Document.findOne({ where: { ssid }, attributes: ['id'] });
+        const metaRecords = await document.getImageMeta();
+        await Promise.all(metaRecords.map(record => record.destroy()));
         if (!document) {
           loadsSkipped += 1;
           return Promise.resolve();

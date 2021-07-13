@@ -12,6 +12,7 @@ const htmlCodes = [
 ];
 
 exports.fixEncoding = text => {
+  if (!text || typeof text !== 'string') return text;
   let cleaned = text;
   htmlCodes.forEach(({ code, replacement }) => {
     cleaned = cleaned.replace(new RegExp(code, 'gm'), replacement);
