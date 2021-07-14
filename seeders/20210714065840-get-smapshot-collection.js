@@ -9,9 +9,9 @@ module.exports = {
     axios.get(`${IIIF}/iiif/3/collection/smapshot`).then(({ data: { items } }) => {
       const metaRequests = items.map(({ id }) => {
         const ssid = id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1');
-        return Document.findOne({ where: { ssid }, attributes: ['id'] }).then(document => {
+        return Document.findOne({ where: { ssid }, attributes: ['id'] }).then(async document => {
           if (!document) return Promise.resolve();
-          return document.addImageMeta({ label: 'Smapshot', value: [true] });
+          return ImageMeta.create({ DocumentId: document.id, label: 'Smapshot', value: [true] });
         });
       });
       return Promise.all(metaRequests);
