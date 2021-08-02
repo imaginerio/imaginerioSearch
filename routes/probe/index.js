@@ -23,7 +23,6 @@ module.exports = router => {
             [Sequelize.Op.overlap]: geom,
           },
         },
-        limit: 5,
       },
     }).then(layers => res.send(layers.filter(l => l.Features.length)));
   });
