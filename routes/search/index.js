@@ -1,3 +1,4 @@
+const { uniqBy, sortBy } = require('lodash');
 const { Layer, Sequelize } = require('../../models');
 
 module.exports = router => {
@@ -26,6 +27,16 @@ module.exports = router => {
           ],
         },
       },
-    }).then(layers => res.send(layers.filter(l => l.Features.length)));
+    }).then(result => {
+      let layers = result.filter(l => l.Features.length);
+      layers = layers.map(({ dataValues }) => ({
+        ...dataValues,
+        Features: sortBy(
+          uniqBy(dataValues.Features, f => f.name),
+          'name'
+        ),
+      }));
+      return res.send(layers);
+    });
   });
 };
