@@ -1,4 +1,4 @@
-const { Layer, Sequelize, sequelize } = require('../../models');
+const { Layer, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/probe/:location', (req, res) => {
@@ -24,7 +24,7 @@ module.exports = router => {
             [Sequelize.Op.gte]: parseInt(year, 10),
           },
           [Sequelize.Op.and]: Sequelize.where(
-            Sequelize.fn('ST_Intersects', sequelize.col('geom'), geom),
+            Sequelize.fn('ST_Intersects', Sequelize.col('geom'), geom),
             true
           ),
         },
