@@ -54,5 +54,7 @@ services:
       - key: AWS_BUCKET
         value: s3://imaginerio-vector/base/{z}/{x}/{y}?timeout=10000
       - fromGroup: tile-generator
+      - key: MAX_ZOOM
+        value: 18
 databases:
   - name: imaginerio
