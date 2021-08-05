@@ -33,7 +33,7 @@ services:
       - fromGroup: tile-generator
       - fromGroup: imaginerio-search
       - key: DATABASE
-        value: imagineRio
+        value: imagineRio_GDB
       - key: IIIF
         value: https://images.imaginerio.org
       - key: COLLECTIONS
