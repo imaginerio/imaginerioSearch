@@ -48,7 +48,8 @@ module.exports = {
           return Feature.bulkCreate(featureLoader, {
             updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'type', 'geom', 'updatedAt'],
           });
-        });
+        })
+        .catch(() => console.log(`Error loading ${layer.name}`));
 
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
