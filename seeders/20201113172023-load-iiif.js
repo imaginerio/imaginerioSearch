@@ -68,25 +68,28 @@ const parseIIIF = (metadata, DocumentId) => {
 };
 
 const loadManifest = (manifest, document) =>
-  axios.get(manifest).then(async ({ data: { metadata, seeAlso, items } }) => {
-    let meta = parseIIIF(metadata, document.id).filter(
-      m => m.label !== 'Identifier' && m.label !== 'Depicts'
-    );
+  axios
+    .get(manifest)
+    .then(async ({ data: { metadata, seeAlso, items } }) => {
+      let meta = parseIIIF(metadata, document.id).filter(
+        m => m.label !== 'Identifier' && m.label !== 'Depicts'
+      );
 
-    meta = [
-      ...meta,
-      { DocumentId: document.id, label: 'Width', value: [items[0].width] },
-      { DocumentId: document.id, label: 'Height', value: [items[0].height] },
-    ];
+      meta = [
+        ...meta,
+        { DocumentId: document.id, label: 'Width', value: [items[0].width] },
+        { DocumentId: document.id, label: 'Height', value: [items[0].height] },
+      ];
 
-    return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
-      individualHooks: true,
-      logging: console.log,
-    }).then(() => {
-      loadsComplete += 1;
-      return loadApi(seeAlso, document);
-    });
-  });
+      return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
+        individualHooks: true,
+        logging: console.log,
+      }).then(() => {
+        loadsComplete += 1;
+        return loadApi(seeAlso, document);
+      });
+    })
+    .catch(err => console.log(err));
 
 const deleteNoIIIFDocuments = async collection => {
   const visual = await Visual.findOne({
