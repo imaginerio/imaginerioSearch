@@ -47,7 +47,7 @@ module.exports = {
                 `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
               )}'`,
               VisualId: layer.id,
-              ssid,
+              ssid: ssid.toUpperCase(),
               artstor: feature.properties.ssc_id,
               geom: Sequelize.fn(
                 'ST_SetSRID',
