@@ -63,17 +63,21 @@ module.exports = {
         });
         await layer.save();
       }
-      const {
-        data: { count },
-      } = await axios.get(
-        `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true&token=${token}`,
-        { httpsAgent }
-      );
-
-      return range(0, count, STEP).reduce(async (previousPromise, next) => {
-        await previousPromise;
-        return stepLoader(layer, next, count);
-      }, Promise.resolve());
+      return axios
+        .get(
+          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true&token=${token}`,
+          { httpsAgent }
+        )
+        .then(({ data: { count } }) =>
+          range(0, count, STEP).reduce(async (previousPromise, next) => {
+            await previousPromise;
+            return stepLoader(layer, next, count);
+          }, Promise.resolve())
+        )
+        .catch(() => {
+          console.log(`Error loading ${l.name}`);
+          return Promise.resolve();
+        });
     };
 
     let {
