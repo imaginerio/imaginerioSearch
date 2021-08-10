@@ -51,7 +51,11 @@ module.exports.default = () =>
 if (require.main === module) {
   executeMigrations('seeders').then(() => {
     if (process.env.DEPLOY_HOOK) {
-      return axios.post(process.env.DEPLOY_HOOK).then(({ data }) => console.log(data));
+      return axios.post(process.env.DEPLOY_HOOK).then(({ data }) => {
+        console.log(data);
+        console.log('COMPLETE');
+        return Promise.resolve();
+      });
     }
     return Promise.resolve();
   });
