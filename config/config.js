@@ -21,6 +21,9 @@ module.exports = {
         require: true,
         rejectUnauthorized: false,
       },
+      statement_timeout: 5000,
+      query_timeout: 5000,
+      connectionTimeoutMillis: 5000,
     },
   },
 };
