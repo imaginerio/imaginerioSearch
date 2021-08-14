@@ -6,6 +6,7 @@ const md5 = require('md5');
 const { range } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
+const errorReport = require('../utils/axiosError');
 const { Feature, Layer, Sequelize } = require('../models');
 
 const STEP = 500;
@@ -49,7 +50,10 @@ module.exports = {
             updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'type', 'geom', 'updatedAt'],
           });
         })
-        .catch(() => console.log(`Error loading ${layer.name}`));
+        .catch(error => {
+          console.log(`Error loading ${layer.name}`);
+          errorReport(error);
+        });
 
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
@@ -74,8 +78,9 @@ module.exports = {
             return stepLoader(layer, next, count);
           }, Promise.resolve())
         )
-        .catch(() => {
+        .catch(error => {
           console.log(`Error loading ${l.name}`);
+          errorReport(error);
           return Promise.resolve();
         });
     };
