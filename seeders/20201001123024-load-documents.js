@@ -7,7 +7,7 @@ const { range } = require('lodash');
 const centroid = require('@turf/centroid').default;
 
 const { authenticate } = require('../utils/auth');
-const errorReport = require('../utils/axiosError');
+const { errorReport } = require('../utils/axiosError');
 const { Visual, Document, Sequelize } = require('../models');
 
 const STEP = 500;

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const errorReport = error => {
+exports.errorReport = error => {
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
@@ -17,5 +17,3 @@ const errorReport = error => {
   }
   console.log(error.config);
 };
-
-export default errorReport;

@@ -6,7 +6,7 @@ const md5 = require('md5');
 const { range } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
-const errorReport = require('../utils/axiosError');
+const { errorReport } = require('../utils/axiosError');
 const { Feature, Layer, Sequelize } = require('../models');
 
 const STEP = 500;
