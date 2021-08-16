@@ -17,7 +17,7 @@ services:
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
       - key: OMIT
-        value: '["CostLine"]'
+        value: '["CoastLine"]'
       - key: SMAPSHOT
         value: true
       - key: DB_URL
@@ -41,7 +41,7 @@ services:
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
       - key: OMIT
-        value: '["CostLine"]'
+        value: '["CoastLine"]'
       - key: SMAPSHOT
         value: true
       - key: DB_URL
