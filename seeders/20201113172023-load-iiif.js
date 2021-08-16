@@ -55,12 +55,21 @@ const parseIIIF = (metadata, DocumentId) => {
   metadata.forEach(m => {
     if (isObject(m)) {
       Object.keys(m.label).forEach(lang => {
-        meta.push({
+        const docMeta = {
           DocumentId,
           label: m.label[lang][0],
           value: m.value[lang].map(fixEncoding),
           language: lang,
-        });
+        };
+
+        if (m.value[lang][0].match(/^<a.*\/a>$/)) {
+          docMeta.value = m.value[lang].map(v => v.replace(/<a.*?>(.*?)<\/a>/gi, '$1'));
+          docMeta.link = m.value[lang]
+            .map(v => v.replace(/.*href=\\?"(.*?)\\?".*/gi, '$1'))
+            .map(v => v.replace(/&#x3A;/gi, ':'))
+            .map(v => v.replace(/&#x2F;/gi, '/'));
+        }
+        meta.push(docMeta);
       });
     }
   });
