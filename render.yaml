@@ -16,6 +16,8 @@ services:
         value: https://images.imaginerio.org
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
+      - key: OMIT
+        value: '["CostLine"]'
       - key: SMAPSHOT
         value: true
       - key: DB_URL
@@ -38,6 +40,8 @@ services:
         value: https://images.imaginerio.org
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
+      - key: OMIT
+        value: '["CostLine"]'
       - key: SMAPSHOT
         value: true
       - key: DB_URL
