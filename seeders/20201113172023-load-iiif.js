@@ -111,9 +111,7 @@ const deleteNoIIIFDocuments = async collection => {
   return Document.destroy({
     where: {
       ssid: {
-        [Sequelize.Op.notIn]: items.map(i =>
-          i.id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1').toUpperCase()
-        ),
+        [Sequelize.Op.notIn]: items.map(i => i.id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1')),
       },
       VisualId: visual.id,
     },
