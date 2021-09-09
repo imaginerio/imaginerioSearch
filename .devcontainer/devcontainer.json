@@ -34,8 +34,7 @@
 		"dbaeumer.vscode-eslint",
 		"mtxr.sqltools",
 		"mtxr.sqltools-driver-pg",
-		"github.vscode-pull-request-github",
-		"ponicode.ponicode"
+		"github.vscode-pull-request-github"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

@@ -117,6 +117,9 @@ module.exports = {
       { httpsAgent }
     );
     layers = layers.filter(l => visual.includes(l.name));
+    console.log(
+      `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/layers?f=json&token=${token}`
+    );
     return layers.reduce(async (previousPromise, next) => {
       await previousPromise;
       return layerLoader(next);
