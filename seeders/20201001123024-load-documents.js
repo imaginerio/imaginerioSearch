@@ -78,7 +78,6 @@ module.exports = {
 
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
-      console.log(l.id);
       const name = l.name.replace(/.*\./gm, '');
       let layer = await Visual.findOne({ where: { name } });
       if (!layer) {
@@ -91,8 +90,10 @@ module.exports = {
             .replace(/ .*/, 's'),
           remoteId: l.id,
         });
-        await layer.save();
       }
+      layer.remoteId = l.id;
+      await layer.save();
+
       return axios
         .get(
           `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true&token=${token}`,
@@ -118,9 +119,6 @@ module.exports = {
       { httpsAgent }
     );
     layers = layers.filter(l => visual.includes(l.name));
-    console.log(
-      `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/layers?f=json&token=${token}`
-    );
     return layers.reduce(async (previousPromise, next) => {
       await previousPromise;
       return layerLoader(next);
