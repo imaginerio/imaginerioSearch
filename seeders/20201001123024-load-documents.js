@@ -78,6 +78,7 @@ module.exports = {
 
     const layerLoader = async l => {
       console.log(`----- Loading ${l.name} -----`);
+      console.log(l.id);
       const name = l.name.replace(/.*\./gm, '');
       let layer = await Visual.findOne({ where: { name } });
       if (!layer) {
