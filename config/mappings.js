@@ -4,5 +4,6 @@ module.exports = {
       { db: 'ssid', remote: 'image_id' },
       { db: 'artstor', remote: 'artstor_id' },
     ],
+    feature: [{ db: 'namealt', remote: 'nameshort' }],
   },
 };

@@ -8,8 +8,8 @@ const centroid = require('@turf/centroid').default;
 
 const { authenticate } = require('../utils/auth');
 const { errorReport } = require('../utils/axiosError');
+const { mapProperties } = require('../utils/mapProperties');
 const { Visual, Document, Sequelize } = require('../models');
-const mappings = require('../config/mappings');
 
 const STEP = 500;
 const visual = [
@@ -33,17 +33,9 @@ module.exports = {
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const featureLoader = features.map(feature => {
-            const { properties, geometry } = feature;
-            if (process.env.MAPPING) {
-              const map = mappings[process.env.MAPPING]?.document;
-              if (map) {
-                map.forEach(({ db, remote }) => {
-                  properties[db] = properties[remote];
-                });
-              }
-            }
+            const properties = mapProperties({ properties: feature.properties, type: 'document' });
             if (!properties.longitude || !properties.latitude) {
-              const point = centroid(geometry);
+              const point = centroid(feature.geometry);
               // eslint-disable-next-line no-param-reassign, prettier/prettier
               [properties.longitude, properties.latitude] = point.geometry.coordinates;
             }
@@ -53,7 +45,7 @@ module.exports = {
               VisualId: layer.id,
               geom: Sequelize.fn(
                 'ST_SetSRID',
-                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(geometry)),
+                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
                 4326
               ),
             };

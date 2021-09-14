@@ -7,6 +7,7 @@ const { range } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
 const { errorReport } = require('../utils/axiosError');
+const { mapProperties } = require('../utils/mapProperties');
 const { Feature, Layer, Sequelize } = require('../models');
 
 const STEP = 500;
@@ -32,10 +33,11 @@ module.exports = {
         )
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
-          const validFeatures = features ? features.filter(f => f.geometry) : [];
+          const validFeatures = features
+            ? features.filter(f => f.geometry && f.properties.name.trim())
+            : [];
           const featureLoader = validFeatures.map(feature => ({
-            ...feature.properties,
-            namealt: feature.properties.namealt_2 || feature.properties.namealt,
+            ...mapProperties({ properties: feature.properties, type: 'feature' }),
             id: `'${md5(
               `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
             )}'`,
