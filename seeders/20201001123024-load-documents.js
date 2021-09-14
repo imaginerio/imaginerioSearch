@@ -9,6 +9,7 @@ const centroid = require('@turf/centroid').default;
 const { authenticate } = require('../utils/auth');
 const { errorReport } = require('../utils/axiosError');
 const { Visual, Document, Sequelize } = require('../models');
+const mappings = require('../config/mappings');
 
 const STEP = 500;
 const visual = [
@@ -32,27 +33,27 @@ module.exports = {
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const featureLoader = features.map(feature => {
-            const ssid = `${
-              feature.properties.notes && feature.properties.notes.match(/^\d+$/)
-                ? feature.properties.notes
-                : feature.properties.ss_id
-            }`;
-            if (!feature.properties.longitude || !feature.properties.latitude) {
-              const point = centroid(feature.geometry);
+            const { properties, geometry } = feature;
+            if (process.env.MAPPING) {
+              const map = mappings[process.env.MAPPING]?.document;
+              if (map) {
+                map.forEach(({ db, remote }) => {
+                  properties[db] = properties[remote];
+                });
+              }
+            }
+            if (!properties.longitude || !properties.latitude) {
+              const point = centroid(geometry);
               // eslint-disable-next-line no-param-reassign, prettier/prettier
-              [feature.properties.longitude, feature.properties.latitude] = point.geometry.coordinates;
+              [properties.longitude, properties.latitude] = point.geometry.coordinates;
             }
             return {
               ...feature.properties,
-              id: `'${md5(
-                `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
-              )}'`,
+              id: `'${md5(`${layer.remoteId}${process.env.ID_SECRET}${properties.objectid}`)}'`,
               VisualId: layer.id,
-              ssid,
-              artstor: feature.properties.ssc_id,
               geom: Sequelize.fn(
                 'ST_SetSRID',
-                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
+                Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(geometry)),
                 4326
               ),
             };
