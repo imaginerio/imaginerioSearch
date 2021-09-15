@@ -11,7 +11,7 @@ const { errorReport } = require('../utils/axiosError');
 const { mapProperties } = require('../utils/mapProperties');
 const { Visual, Document, Sequelize } = require('../models');
 
-const STEP = 20;
+const STEP = 5;
 const visual = [
   'ViewConesPoly',
   'AerialExtentsPoly',
