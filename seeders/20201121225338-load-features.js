@@ -19,7 +19,11 @@ const visual = [
   'SurveyExtentsPoly',
   'BasemapExtentsPoly',
 ];
-const OMIT = process.env.OMIT ? JSON.parse(process.env.OMIT) : [];
+
+let OMIT = process.env.OMIT ? JSON.parse(process.env.OMIT) : [];
+if (process.env.THEMATIC) {
+  OMIT = OMIT.concat(JSON.parse(process.env.THEMATIC));
+}
 
 module.exports = {
   up: async () => {
