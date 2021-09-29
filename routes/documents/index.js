@@ -54,7 +54,7 @@ module.exports = router => {
           Documents: l.Documents.map(d => ({
             ...omit(d.dataValues, 'ImageMeta'),
             ...attachImageMeta(d.ImageMeta),
-          })).filter(d => d.width && d.height),
+          })),
         }));
       return res.send(response);
     });

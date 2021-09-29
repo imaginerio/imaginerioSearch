@@ -6,7 +6,7 @@ services:
     env: node
     healthCheckPath: /layers
     buildCommand: yarn
-    startCommand: yarn start
+    startCommand: yarn db:migrate && yarn start
     initialDeployHook: yarn db:job
     envVars:
       - fromGroup: tile-generator
@@ -20,6 +20,8 @@ services:
         value: '["CoastLine"]'
       - key: SMAPSHOT
         value: true
+      - key: MAPPING
+        value: rio
       - key: DB_URL
         fromDatabase:
           name: imaginerio
@@ -44,6 +46,8 @@ services:
         value: '["CoastLine"]'
       - key: SMAPSHOT
         value: true
+      - key: MAPPING
+        value: rio
       - key: DB_URL
         fromDatabase:
           name: imaginerio
@@ -64,3 +68,4 @@ services:
         value: 18
 databases:
   - name: imaginerio
+    postgresMajorVersion: 13

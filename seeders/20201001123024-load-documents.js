@@ -8,9 +8,10 @@ const centroid = require('@turf/centroid').default;
 
 const { authenticate } = require('../utils/auth');
 const { errorReport } = require('../utils/axiosError');
+const { mapProperties } = require('../utils/mapProperties');
 const { Visual, Document, Sequelize } = require('../models');
 
-const STEP = 500;
+const STEP = 50;
 const visual = [
   'ViewConesPoly',
   'AerialExtentsPoly',
@@ -32,24 +33,16 @@ module.exports = {
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const featureLoader = features.map(feature => {
-            const ssid = `${
-              feature.properties.notes && feature.properties.notes.match(/^\d+$/)
-                ? feature.properties.notes
-                : feature.properties.ss_id
-            }`;
-            if (!feature.properties.longitude || !feature.properties.latitude) {
+            const properties = mapProperties({ properties: feature.properties, type: 'document' });
+            if (!properties.longitude || !properties.latitude) {
               const point = centroid(feature.geometry);
               // eslint-disable-next-line no-param-reassign, prettier/prettier
-              [feature.properties.longitude, feature.properties.latitude] = point.geometry.coordinates;
+              [properties.longitude, properties.latitude] = point.geometry.coordinates;
             }
             return {
               ...feature.properties,
-              id: `'${md5(
-                `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
-              )}'`,
+              id: `'${md5(`${layer.remoteId}${process.env.ID_SECRET}${properties.objectid}`)}'`,
               VisualId: layer.id,
-              ssid,
-              artstor: feature.properties.ssc_id,
               geom: Sequelize.fn(
                 'ST_SetSRID',
                 Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
