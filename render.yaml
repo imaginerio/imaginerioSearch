@@ -68,3 +68,4 @@ services:
         value: 18
 databases:
   - name: imaginerio
+    postgresMajorVersion: 13
