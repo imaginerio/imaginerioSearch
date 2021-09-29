@@ -6,7 +6,7 @@ services:
     env: node
     healthCheckPath: /layers
     buildCommand: yarn
-    startCommand: yarn start
+    startCommand: yarn db:migrate && yarn start
     initialDeployHook: yarn db:job
     envVars:
       - fromGroup: tile-generator
