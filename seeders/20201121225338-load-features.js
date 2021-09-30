@@ -40,7 +40,6 @@ module.exports = {
           const validFeatures = features
             ? features.filter(f => f.geometry && f.properties.name.trim())
             : [];
-          console.log(features.map(f => f.properties));
           const featureLoader = validFeatures.map(feature => ({
             ...mapProperties({ properties: feature.properties, type: 'feature' }),
             id: `'${md5(
