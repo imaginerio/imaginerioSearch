@@ -49,4 +49,29 @@ module.exports = router => {
     });
     res.send(layers);
   });
+
+  router.get('/thematic/:id', (req, res) =>
+    ThematicLayer.findByPk(req.params.id, {
+      include: {
+        association: 'ThematicValues',
+        attributes: ['number'],
+        include: {
+          association: 'ThematicFeature',
+          attributes: ['name', 'geom'],
+        },
+      },
+    }).then(({ ThematicValues }) =>
+      res.send({
+        type: 'FeatureCollection',
+        features: ThematicValues.map(val => ({
+          type: 'Feature',
+          properties: {
+            value: val.number,
+            name: val.ThematicFeature.name,
+          },
+          geometry: val.ThematicFeature.geom,
+        })),
+      })
+    )
+  );
 };
