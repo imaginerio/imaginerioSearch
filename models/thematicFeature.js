@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   ThematicFeature.init(
     {
+      name: DataTypes.TEXT,
       type: DataTypes.ENUM(['point', 'line', 'polygon']),
       geom: DataTypes.GEOMETRY,
     },

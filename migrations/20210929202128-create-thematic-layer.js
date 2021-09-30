@@ -10,6 +10,15 @@ module.exports = {
       title: {
         type: Sequelize.TEXT,
       },
+      name: {
+        type: Sequelize.TEXT,
+      },
+      property: {
+        type: Sequelize.TEXT,
+      },
+      remoteId: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

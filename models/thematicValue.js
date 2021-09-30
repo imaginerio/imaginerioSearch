@@ -9,9 +9,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   ThematicValue.init(
     {
-      title: DataTypes.TEXT,
       number: DataTypes.FLOAT,
       category: DataTypes.TEXT,
+      firstyear: DataTypes.INTEGER,
+      lastyear: DataTypes.INTEGER,
     },
     {
       sequelize,

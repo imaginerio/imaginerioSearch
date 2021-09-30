@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
   ThematicLayer.init(
     {
       title: DataTypes.TEXT,
+      property: DataTypes.TEXT,
+      name: DataTypes.TEXT,
+      remoteId: DataTypes.INTEGER,
     },
     {
       sequelize,

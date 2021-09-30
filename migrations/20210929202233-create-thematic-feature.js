@@ -7,6 +7,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      name: {
+        type: Sequelize.TEXT,
+      },
       type: {
         type: Sequelize.ENUM(['point', 'line', 'polygon']),
       },

@@ -7,14 +7,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      title: {
-        type: Sequelize.TEXT,
-      },
       number: {
         type: Sequelize.FLOAT,
       },
       category: {
         type: Sequelize.TEXT,
+      },
+      firstyear: {
+        type: Sequelize.INTEGER,
+      },
+      lastyear: {
+        type: Sequelize.INTEGER,
       },
       ThematicLayerId: {
         type: Sequelize.INTEGER,
