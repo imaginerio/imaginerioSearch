@@ -6,7 +6,14 @@ module.exports.mapProperties = ({ properties, type }) => {
     const map = mappings[process.env.MAPPING][type];
     if (map) {
       map.forEach(({ db, remote }) => {
-        properties[db] = properties[remote];
+        if (Array.isArray(remote)) {
+          remote.some(r => {
+            properties[db] = properties[r];
+            return properties[r];
+          });
+        } else {
+          properties[db] = properties[remote];
+        }
       });
     }
   }

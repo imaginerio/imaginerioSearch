@@ -8,7 +8,7 @@ module.exports = {
   },
   rio: {
     document: [
-      { db: 'ssid', remote: 'ss_id' },
+      { db: 'ssid', remote: ['notes', 'ss_id'] },
       { db: 'artstor', remote: 'ssc_id' },
     ],
     feature: [{ db: 'namealt', remote: 'nameshort' }],
