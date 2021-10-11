@@ -49,7 +49,7 @@ module.exports = router => {
     ThematicLayer.findByPk(req.params.id, {
       include: {
         association: 'ThematicValues',
-        attributes: ['number'],
+        attributes: ['id', 'number'],
         include: {
           association: 'ThematicFeature',
           attributes: ['name', 'geom'],
@@ -60,6 +60,7 @@ module.exports = router => {
         type: 'FeatureCollection',
         features: ThematicValues.map(val => ({
           type: 'Feature',
+          id: val.id,
           properties: {
             value: val.number,
             name: val.ThematicFeature.name,
