@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       title: DataTypes.TEXT,
       property: DataTypes.TEXT,
       name: DataTypes.TEXT,
+      colors: DataTypes.ARRAY(DataTypes.STRING),
       remoteId: DataTypes.INTEGER,
     },
     {

@@ -3,6 +3,7 @@ require('dotenv').config();
 const axios = require('axios');
 const https = require('https');
 const { range } = require('lodash');
+const colorbrewer = require('colorbrewer');
 
 const { authenticate } = require('../utils/auth');
 const { errorReport } = require('../utils/axiosError');
@@ -11,6 +12,7 @@ const config = require('../config/thematic');
 
 const STEP = 500;
 const thematicLayers = config[process.env.MAPPING];
+const { sequential } = colorbrewer.schemeGroups;
 
 module.exports = {
   up: async () => {
@@ -63,6 +65,7 @@ module.exports = {
             title: layer.title,
             property: layer.property,
             remoteId: l.id,
+            colors: colorbrewer[sequential[Math.floor(Math.random() * sequential.length)]][4],
           }))
         );
       }

@@ -1,6 +1,5 @@
 const d3Scale = require('d3-scale');
 const d3Array = require('d3-array');
-const colorbrewer = require('colorbrewer');
 const { omit } = require('lodash');
 
 const { ThematicLayer, Sequelize } = require('../../models');
@@ -20,7 +19,7 @@ module.exports = router => {
       };
     }
     let layers = await ThematicLayer.findAll({
-      attributes: ['id', 'title'],
+      attributes: ['id', 'title', 'colors'],
       include: {
         association: 'ThematicValues',
         attributes: ['number'],
@@ -38,13 +37,9 @@ module.exports = router => {
         .nice()
         .thresholds();
 
-      const { sequential } = colorbrewer.schemeGroups;
-      const colors = colorbrewer[sequential[Math.floor(Math.random() * sequential.length)]][4];
-
       return {
         ...omit(layer.dataValues, 'ThematicValues'),
         scale,
-        colors,
       };
     });
     res.send(layers);

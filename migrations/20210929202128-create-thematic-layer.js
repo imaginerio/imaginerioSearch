@@ -16,6 +16,9 @@ module.exports = {
       property: {
         type: Sequelize.TEXT,
       },
+      colors: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+      },
       remoteId: {
         type: Sequelize.INTEGER,
       },

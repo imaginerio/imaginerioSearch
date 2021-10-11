@@ -3,20 +3,24 @@ module.exports = {
     VulnerabilityPoly: {
       layers: [
         {
-          title: 'Vulnerability 1',
+          title: 'Socioeconomic',
           property: 'rpl_theme1',
         },
         {
-          title: 'Vulnerability 2',
+          title: 'Household Composition & Disability',
           property: 'rpl_theme2',
         },
         {
-          title: 'Vulnerability 3',
+          title: 'Minority Status & Language',
           property: 'rpl_theme3',
         },
         {
-          title: 'Vulnerability 4',
+          title: 'Housing Type & Transportation',
           property: 'rpl_theme4',
+        },
+        {
+          title: 'Overall Vulnerability',
+          property: 'rpl_themes',
         },
       ],
       name: 'location',
