@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       LayerId: DataTypes.INTEGER,
       type: DataTypes.TEXT,
       geom: DataTypes.GEOMETRY,
+      updated: DataTypes.BOOLEAN,
     },
     {
       sequelize,

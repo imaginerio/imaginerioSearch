@@ -2,7 +2,7 @@
 require('dotenv').config();
 const axios = require('axios');
 const https = require('https');
-const md5 = require('md5');
+const uuid = require('uuid').v4;
 const { range } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
@@ -42,9 +42,7 @@ module.exports = {
             : [];
           const featureLoader = validFeatures.map(feature => ({
             ...mapProperties({ properties: feature.properties, type: 'feature' }),
-            id: `'${md5(
-              `${layer.remoteId}${process.env.ID_SECRET}${feature.properties.objectid}`
-            )}'`,
+            id: `'${uuid()}'`,
             LayerId: layer.id,
             geom: Sequelize.fn(
               'ST_SetSRID',
@@ -52,9 +50,7 @@ module.exports = {
               4326
             ),
           }));
-          return Feature.bulkCreate(featureLoader, {
-            updateOnDuplicate: ['name', 'firstyear', 'lastyear', 'type', 'geom', 'updatedAt'],
-          });
+          return Feature.bulkCreate(featureLoader);
         })
         .catch(error => {
           console.log(`Error loading ${layer.name}`);
@@ -72,6 +68,17 @@ module.exports = {
           remoteId: l.id,
         });
         await layer.save();
+      } else {
+        await Feature.update(
+          {
+            updated: true,
+          },
+          {
+            where: {
+              LayerId: layer.id,
+            },
+          }
+        );
       }
       return axios
         .get(
@@ -79,10 +86,42 @@ module.exports = {
           { httpsAgent }
         )
         .then(({ data: { count } }) =>
-          range(0, count, STEP).reduce(async (previousPromise, next) => {
-            await previousPromise;
-            return stepLoader(layer, next, count);
-          }, Promise.resolve())
+          range(0, count, STEP)
+            .reduce(async (previousPromise, next) => {
+              await previousPromise;
+              return stepLoader(layer, next, count);
+            }, Promise.resolve())
+            .then(() => {
+              console.log('Deleting superceded features');
+              return Feature.destroy({
+                where: {
+                  LayerId: layer.id,
+                  updated: true,
+                },
+              });
+            })
+            .catch(() => {
+              console.log('Deleting new features');
+              return Feature.destroy({
+                where: {
+                  LayerId: layer.id,
+                  updated: {
+                    [Sequelize.Op.ne]: true,
+                  },
+                },
+              }).then(() =>
+                Feature.update(
+                  {
+                    updated: true,
+                  },
+                  {
+                    where: {
+                      VisualId: layer.id,
+                    },
+                  }
+                )
+              );
+            })
         )
         .catch(error => {
           console.log(`Error loading ${l.name}`);

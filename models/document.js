@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       longitude: DataTypes.FLOAT,
       heading: DataTypes.FLOAT,
       geom: DataTypes.GEOMETRY,
+      updated: DataTypes.BOOLEAN,
     },
     {
       sequelize,
