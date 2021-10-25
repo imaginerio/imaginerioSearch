@@ -2,7 +2,7 @@
 require('dotenv').config();
 const axios = require('axios');
 const https = require('https');
-const md5 = require('md5');
+const uuid = require('uuid').v4;
 const { range } = require('lodash');
 const centroid = require('@turf/centroid').default;
 
@@ -41,7 +41,7 @@ module.exports = {
             }
             return {
               ...feature.properties,
-              id: `'${md5(`${layer.remoteId}${process.env.ID_SECRET}${properties.objectid}`)}'`,
+              id: `'${uuid()}'`,
               VisualId: layer.id,
               geom: Sequelize.fn(
                 'ST_SetSRID',
@@ -50,23 +50,7 @@ module.exports = {
               ),
             };
           });
-          return Document.bulkCreate(featureLoader, {
-            updateOnDuplicate: [
-              'title',
-              'ssid',
-              'firstyear',
-              'lastyear',
-              'latitude',
-              'longitude',
-              'heading',
-              'VisualId',
-              'geom',
-              'updatedAt',
-              'creator',
-              'creditline',
-              'artstor',
-            ],
-          });
+          return Document.bulkCreate(featureLoader);
         });
 
     const layerLoader = async l => {
@@ -83,6 +67,17 @@ module.exports = {
             .replace(/ .*/, 's'),
           remoteId: l.id,
         });
+      } else {
+        await Document.update(
+          {
+            updated: true,
+          },
+          {
+            where: {
+              VisualId: layer.id,
+            },
+          }
+        );
       }
       layer.remoteId = l.id;
       await layer.save();
@@ -98,10 +93,37 @@ module.exports = {
             return stepLoader(layer, next, count);
           }, Promise.resolve())
         )
+        .then(() => {
+          console.log('Deleting superceded features');
+          return Document.destroy({
+            where: {
+              VisualId: layer.id,
+              updated: true,
+            },
+          });
+        })
         .catch(error => {
           console.log(`Error loading ${l.name}`);
           errorReport(error);
-          return Promise.resolve();
+          return Document.destroy({
+            where: {
+              VisualId: layer.id,
+              updated: {
+                [Sequelize.Op.ne]: true,
+              },
+            },
+          }).then(() =>
+            Document.update(
+              {
+                updated: true,
+              },
+              {
+                where: {
+                  VisualId: layer.id,
+                },
+              }
+            )
+          );
         });
     };
 
