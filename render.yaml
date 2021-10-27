@@ -11,6 +11,7 @@ services:
     envVars:
       - fromGroup: tile-generator
       - fromGroup: scalegrid
+      - fromGroup: scalegrid-rio
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
@@ -36,6 +37,7 @@ services:
       - fromGroup: tile-generator
       - fromGroup: imaginerio-search
       - fromGroup: scalegrid
+      - fromGroup: scalegrid-rio
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
