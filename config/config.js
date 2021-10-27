@@ -1,6 +1,5 @@
 require('dotenv').config();
 const fs = require('fs');
-const path = require('path');
 
 module.exports = {
   development: {
@@ -22,7 +21,7 @@ module.exports = {
       ssl: {
         require: true,
         rejectUnauthorized: false,
-        ca: [fs.readFileSync(path.resolve(__dirname, '../cert.pem'))],
+        ca: [fs.readFileSync(process.env.CERT_PATH)],
       },
       // statement_timeout: 6000,
       // query_timeout: 6000,

@@ -23,6 +23,8 @@ services:
         value: true
       - key: MAPPING
         value: rio
+      - key: CERT_PATH
+        value: /etc/secrets/cert.pem
   - type: cron
     name: imaginerio-database-seeder
     region: oregon
@@ -46,6 +48,8 @@ services:
         value: true
       - key: MAPPING
         value: rio
+      - key: CERT_PATH
+        value: /etc/secrets/cert.pem
   - type: cron
     name: imaginerio-vector-tile-generator
     region: oregon
