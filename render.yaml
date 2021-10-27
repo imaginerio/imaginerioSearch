@@ -14,7 +14,7 @@ services:
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
-        value: https://images.imaginerio.org
+        value: https://images2.imaginerio.org
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
       - key: OMIT
@@ -37,7 +37,7 @@ services:
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
-        value: https://images.imaginerio.org
+        value: https://images2.imaginerio.org
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
       - key: OMIT
