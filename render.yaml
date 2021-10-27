@@ -56,7 +56,8 @@ services:
     name: imaginerio-vector-tile-generator
     region: oregon
     env: docker
-    schedule: "1 0 * * 6" 
+    schedule: "1 0 * * 6"
+    plan: pro
     repo: https://github.com/imaginerio/vector-tile-generator.git
     envVars:
       - key: AWS_BUCKET
