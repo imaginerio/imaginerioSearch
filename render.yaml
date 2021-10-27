@@ -10,6 +10,7 @@ services:
     initialDeployHook: yarn db:job
     envVars:
       - fromGroup: tile-generator
+      - fromGroup: scalegrid
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
@@ -22,10 +23,6 @@ services:
         value: true
       - key: MAPPING
         value: rio
-      - key: DB_URL
-        fromDatabase:
-          name: imaginerio
-          property: connectionString
   - type: cron
     name: imaginerio-database-seeder
     region: oregon
@@ -36,6 +33,7 @@ services:
     envVars:
       - fromGroup: tile-generator
       - fromGroup: imaginerio-search
+      - fromGroup: scalegrid
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
@@ -48,10 +46,6 @@ services:
         value: true
       - key: MAPPING
         value: rio
-      - key: DB_URL
-        fromDatabase:
-          name: imaginerio
-          property: connectionString
   - type: cron
     name: imaginerio-vector-tile-generator
     region: oregon
@@ -66,6 +60,3 @@ services:
         value: imagineRio_GDB
       - key: MAX_ZOOM
         value: 18
-databases:
-  - name: imaginerio
-    postgresMajorVersion: 13
