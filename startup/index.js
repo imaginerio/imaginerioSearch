@@ -54,7 +54,7 @@ if (require.main === module) {
       return axios.post(process.env.DEPLOY_HOOK).then(({ data }) => {
         console.log(data);
         console.log('COMPLETE');
-        return Promise.resolve();
+        return process.exit(0);
       });
     }
     return Promise.resolve();
