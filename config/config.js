@@ -1,9 +1,6 @@
 require('dotenv').config();
 const fs = require('fs');
 
-let url = process.env.DB_URL;
-if (process.env.DB_NAME) url += `/${process.env.DB_NAME}`;
-
 module.exports = {
   development: {
     url: 'postgresql://postgres:postgres@127.0.0.1/imagineriosearch',
@@ -16,7 +13,7 @@ module.exports = {
     seederStorage: 'sequelize',
   },
   production: {
-    url,
+    url: process.env.DB_URL,
     dialect: 'postgres',
     seederStorage: 'sequelize',
     logging: false,
