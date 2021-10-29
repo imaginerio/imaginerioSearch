@@ -55,21 +55,23 @@ const parseIIIF = (metadata, DocumentId) => {
   metadata.forEach(m => {
     if (isObject(m)) {
       Object.keys(m.label).forEach(lang => {
-        const docMeta = {
-          DocumentId,
-          label: m.label[lang][0],
-          value: m.value[lang].map(fixEncoding),
-          language: lang,
-        };
+        if (m.label[lang] && m.value[lang]) {
+          const docMeta = {
+            DocumentId,
+            label: m.label[lang][0],
+            value: m.value[lang].map(fixEncoding),
+            language: lang,
+          };
 
-        if (m.value[lang][0].match(/^<a.*\/a>$/)) {
-          docMeta.value = m.value[lang].map(v => v.replace(/<a.*?>(.*?)<\/a>/gi, '$1'));
-          docMeta.link = m.value[lang]
-            .map(v => v.replace(/.*href=\\?"(.*?)\\?".*/gi, '$1'))
-            .map(v => v.replace(/&#x3A;/gi, ':'))
-            .map(v => v.replace(/&#x2F;/gi, '/'));
+          if (m.value[lang][0].match(/^<a.*\/a>$/)) {
+            docMeta.value = m.value[lang].map(v => v.replace(/<a.*?>(.*?)<\/a>/gi, '$1'));
+            docMeta.link = m.value[lang]
+              .map(v => v.replace(/.*href=\\?"(.*?)\\?".*/gi, '$1'))
+              .map(v => v.replace(/&#x3A;/gi, ':'))
+              .map(v => v.replace(/&#x2F;/gi, '/'));
+          }
+          meta.push(docMeta);
         }
-        meta.push(docMeta);
       });
     }
   });
@@ -107,11 +109,11 @@ const deleteNoIIIFDocuments = async collection => {
   });
   const {
     data: { items },
-  } = await axios.get(`${IIIF}/iiif/3/collection/${collection}`);
+  } = await axios.get(`${IIIF}/iiif/collection/${collection}.json`);
   return Document.destroy({
     where: {
       ssid: {
-        [Sequelize.Op.notIn]: items.map(i => i.id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1')),
+        [Sequelize.Op.notIn]: items.map(i => i.id.replace(/.*?\/iiif\/(.*?)\/manifest.*/gi, '$1')),
       },
       VisualId: visual.id,
     },
@@ -122,12 +124,12 @@ const loadCollection = collection => {
   loadsComplete = 0;
   loadsSkipped = 0;
   const spinner = ora(`Loading ${collection}...`).start();
-  return axios.get(`${IIIF}/iiif/3/collection/${collection}`).then(({ data: { items } }) =>
+  return axios.get(`${IIIF}/iiif/collection/${collection}.json`).then(({ data: { items } }) =>
     items
       .reduce(async (previousPromise, { id: manifest }, i) => {
         await previousPromise;
         spinner.text = `Loading ${collection} ${i + 1} / ${items.length}`;
-        const ssid = manifest.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1');
+        const ssid = manifest.replace(/.*?\/iiif\/(.*?)\/manifest.*/gi, '$1');
         const document = await Document.findOne({ where: { ssid }, attributes: ['id'] });
         if (!document) {
           loadsSkipped += 1;
