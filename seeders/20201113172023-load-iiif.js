@@ -155,7 +155,6 @@ module.exports = {
       return loadCollection(collection);
     }, Promise.resolve());
   },
-
   down: queryInterface => queryInterface.bulkDelete('ImageMeta'),
 };
 
