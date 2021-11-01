@@ -17,6 +17,9 @@ module.exports = router => {
           language: [lang, 'none'],
         },
       },
-    }).then(document => res.send(document.ImageMeta.map(m => processImageMeta(m))));
+    }).then(document => {
+      if (!document) return res.send([]);
+      return res.send(document.ImageMeta.map(m => processImageMeta(m)));
+    });
   });
 };
