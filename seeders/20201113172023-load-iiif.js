@@ -124,9 +124,10 @@ const loadCollection = collection => {
   loadsComplete = 0;
   loadsSkipped = 0;
   const spinner = ora(`Loading ${collection}...`).start();
-  return axios.get(`${IIIF}/iiif/collection/${collection}.json`).then(({ data: { items } }) =>
-    items
-      .reduce(async (previousPromise, { id: manifest }, i) => {
+  return axios
+    .get(`${IIIF}/iiif/collection/${collection}.json`)
+    .then(({ data: { items } }) =>
+      items.reduce(async (previousPromise, { id: manifest }, i) => {
         await previousPromise;
         spinner.text = `Loading ${collection} ${i + 1} / ${items.length}`;
         const ssid = manifest.replace(/.*?\/iiif\/(.*?)\/manifest.*/gi, '$1');
@@ -139,10 +140,10 @@ const loadCollection = collection => {
         await Promise.all(metaRecords.map(record => record.destroy()));
         return loadManifest(manifest, document);
       })
-      .then(async () =>
-        spinner.succeed(`${loadsComplete} items imported / ${loadsSkipped} items skipped`)
-      )
-  );
+    )
+    .then(async () =>
+      spinner.succeed(`${loadsComplete} items imported / ${loadsSkipped} items skipped`)
+    );
 };
 
 module.exports = {
