@@ -1,53 +1,15 @@
 /* eslint-disable no-console */
 require('dotenv').config();
 const axios = require('axios');
-const { isArray, isObject, map, uniqBy } = require('lodash');
+const { isArray, isObject, uniqBy } = require('lodash');
 const ora = require('ora');
 const { ImageMeta, Document, Visual, Sequelize } = require('../models');
 const { fixEncoding } = require('../utils/fixEncoding');
 
 const { IIIF, COLLECTIONS } = process.env;
 
-const apiProps = ['dcterms:hasVersion', 'dcterms:source', 'foaf:depicts'];
-
 let loadsComplete = 0;
 let loadsSkipped = 0;
-
-const getSeeAlso = seeAlso => {
-  if (!seeAlso || !isArray(seeAlso)) return null;
-  const link = seeAlso.find(s => s.id && s.id.match(IIIF));
-  if (link) return link.id;
-  return null;
-};
-
-const loadApi = (seeAlso, document) => {
-  const link = getSeeAlso(seeAlso);
-  if (!link) return Promise.resolve();
-
-  return axios.get(link).then(({ data }) => {
-    const meta = [];
-    apiProps.forEach(prop => {
-      if (data[prop]) {
-        const [d] = data[prop];
-        const label = `${d.property_label.charAt(0).toUpperCase()}${d.property_label.slice(1)}`;
-        meta.push({
-          DocumentId: document.id,
-          label,
-          value: map(data[prop], 'o:label').map(fixEncoding),
-          link: map(data[prop], '@id'),
-        });
-      }
-    });
-    return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
-      individualHooks: true,
-      logging: console.log,
-    }).then(() => {
-      // eslint-disable-next-line no-param-reassign
-      document.thumbnail = data.thumbnail_display_urls.large;
-      return document.save();
-    });
-  });
-};
 
 const parseIIIF = (metadata, DocumentId) => {
   const meta = [];
@@ -78,13 +40,28 @@ const parseIIIF = (metadata, DocumentId) => {
   return meta;
 };
 
+const parseLink = (link, label, DocumentId) => ({
+  DocumentId,
+  label,
+  value: link.map(l => l.label.none[0]),
+  link: link.map(l => l.id),
+});
+
 const loadManifest = (manifest, document) =>
   axios
     .get(manifest)
-    .then(async ({ data: { metadata, seeAlso, items } }) => {
+    .then(async ({ data: { metadata, items, seeAlso, homepage, thumbnail } }) => {
       let meta = parseIIIF(metadata, document.id).filter(
         m => m.label !== 'Identifier' && m.label !== 'Depicts'
       );
+
+      if (seeAlso) {
+        meta.push(parseLink(seeAlso, 'See Also', document.id));
+      }
+
+      if (homepage) {
+        meta.push(parseLink(homepage, 'Source', document.id));
+      }
 
       meta = [
         ...meta,
@@ -97,7 +74,9 @@ const loadManifest = (manifest, document) =>
         logging: console.log,
       }).then(() => {
         loadsComplete += 1;
-        return loadApi(seeAlso, document);
+        // eslint-disable-next-line no-param-reassign
+        document.thumbnail = thumbnail[0].id;
+        return document.save();
       });
     })
     .catch(err => console.log(err));
