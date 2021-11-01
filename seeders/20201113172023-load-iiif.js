@@ -64,8 +64,8 @@ const parseIIIF = (metadata, DocumentId) => {
         };
 
         if (value[0].match(/^<a.*\/a>$/)) {
-          docMeta.value = m.value[lang].map(v => v.replace(/<a.*?>(.*?)<\/a>/gi, '$1'));
-          docMeta.link = m.value[lang]
+          docMeta.value = value.map(v => v.replace(/<a.*?>(.*?)<\/a>/gi, '$1'));
+          docMeta.link = value
             .map(v => v.replace(/.*href=\\?"(.*?)\\?".*/gi, '$1'))
             .map(v => v.replace(/&#x3A;/gi, ':'))
             .map(v => v.replace(/&#x2F;/gi, '/'));
