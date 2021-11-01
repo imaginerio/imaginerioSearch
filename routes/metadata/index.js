@@ -13,7 +13,9 @@ module.exports = router => {
       include: {
         association: 'ImageMeta',
         attributes: ['label', 'value', 'link'],
-        where: [lang, 'none'],
+        where: {
+          language: [lang, 'none'],
+        },
       },
     }).then(document => res.send(document.ImageMeta.map(m => processImageMeta(m))));
   });
