@@ -69,9 +69,9 @@ const parseIIIF = (metadata, DocumentId) => {
             .map(v => v.replace(/.*href=\\?"(.*?)\\?".*/gi, '$1'))
             .map(v => v.replace(/&#x3A;/gi, ':'))
             .map(v => v.replace(/&#x2F;/gi, '/'));
-
-          meta.push(docMeta);
         }
+
+        meta.push(docMeta);
       });
     }
   });
