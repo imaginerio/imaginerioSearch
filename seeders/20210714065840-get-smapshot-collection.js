@@ -8,7 +8,7 @@ module.exports = {
   up: () => {
     if (!SMAPSHOT) return Promise.resolve();
 
-    return axios.get(`${IIIF}/iiif/3/collection/smapshot`).then(({ data: { items } }) => {
+    return axios.get(`${IIIF}/iiif/collection/smapshot.json`).then(({ data: { items } }) => {
       const metaRequests = items.map(({ id }) => {
         const ssid = id.replace(/.*?\/3\/(.*?)\/manifest/gi, '$1');
         return Document.findOne({ where: { ssid }, attributes: ['id'] }).then(async document => {
