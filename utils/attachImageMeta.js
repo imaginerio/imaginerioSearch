@@ -6,7 +6,7 @@ exports.processImageMeta = meta => {
     value = parseFloat(value);
   }
   const link = !meta.link || meta.link.length > 1 ? meta.link : meta.link[0];
-  return { label: meta.label, value, link };
+  return { label: meta.label, value, link, key: meta.key };
 };
 
 exports.attachImageMeta = imageMeta => {
