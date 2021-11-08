@@ -18,9 +18,11 @@ const parseIIIF = (metadata, DocumentId) => {
     if (isObject(m)) {
       Object.keys(m.label).forEach(lang => {
         const value = m.value[lang] || m.value.none;
+        const key = m.label.en[0] || Object.values(m.label)[0][0];
         const docMeta = {
           DocumentId,
           label: m.label[lang][0],
+          key,
           value: value.map(fixEncoding),
           language: lang,
         };
@@ -43,6 +45,7 @@ const parseIIIF = (metadata, DocumentId) => {
 const parseLink = (link, label, DocumentId) => ({
   DocumentId,
   label,
+  key: label,
   value: link.map(l => l.label.none[0]),
   link: link.map(l => l.id),
 });
@@ -65,8 +68,8 @@ const loadManifest = (manifest, document) =>
 
       meta = [
         ...meta,
-        { DocumentId: document.id, label: 'Width', value: [items[0].width] },
-        { DocumentId: document.id, label: 'Height', value: [items[0].height] },
+        { DocumentId: document.id, label: 'Width', key: 'Width', value: [items[0].width] },
+        { DocumentId: document.id, label: 'Height', key: 'Height', value: [items[0].height] },
       ];
 
       return ImageMeta.bulkCreate(uniqBy(meta, 'label'), {
