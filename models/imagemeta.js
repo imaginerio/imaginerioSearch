@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         unique: 'documentMetaLabel',
       },
+      key: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
       label: {
         type: DataTypes.TEXT,
         unique: 'documentMetaLabel',

@@ -43,7 +43,7 @@ module.exports = router => {
         where,
         include: {
           association: 'ImageMeta',
-          attributes: ['label', 'value', 'link'],
+          attributes: [['key', 'label'], 'value', 'link'],
         },
       },
     }).then(layers => {

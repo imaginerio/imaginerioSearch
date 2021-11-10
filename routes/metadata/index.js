@@ -12,7 +12,7 @@ module.exports = router => {
       },
       include: {
         association: 'ImageMeta',
-        attributes: ['label', 'value', 'link'],
+        attributes: ['label', 'value', 'link', 'key'],
         where: {
           language: [lang, 'none'],
         },
