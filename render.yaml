@@ -14,7 +14,7 @@ services:
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
-        value: https://imaginerio-images.s3.us-east-1.amazonaws.com
+        value: https://iiif.imaginerio.org
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
       - key: OMIT
@@ -42,7 +42,7 @@ services:
       - key: DATABASE
         value: imagineRio_GDB
       - key: IIIF
-        value: https://imaginerio-images.s3.us-east-1.amazonaws.com
+        value: https://iiif.imaginerio.org
       - key: COLLECTIONS
         value: '["maps", "plans", "views", "aerials"]'
       - key: OMIT
