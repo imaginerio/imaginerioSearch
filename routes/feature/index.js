@@ -5,8 +5,10 @@ module.exports = router => {
     const { id } = req.params;
     const { year } = req.query;
     if (!id || !year) return res.sendStatus(500);
-    return Feature.findByPk(id, { attributes: ['id', 'name', 'type', 'geom'] }).then(feature =>
-      Feature.findOne({
+    return Feature.findByPk(id, { attributes: ['id', 'name', 'type', 'geom'] }).then(feature => {
+      if (!feature) return res.sendStatus(404);
+
+      return Feature.findOne({
         attributes: [[Sequelize.fn('ST_Collect', Sequelize.col('geom')), 'geom']],
         group: ['name'],
         where: {
@@ -50,7 +52,7 @@ module.exports = router => {
             type: feature.type,
           },
         })
-      )
-    );
+      );
+    });
   });
 };
