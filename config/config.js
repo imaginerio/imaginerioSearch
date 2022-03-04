@@ -1,8 +1,4 @@
 require('dotenv').config();
-const fs = require('fs');
-
-let url = process.env.DB_URL;
-if (process.env.DB_NAME) url += `/${process.env.DB_NAME}`;
 
 module.exports = {
   development: {
@@ -16,7 +12,7 @@ module.exports = {
     seederStorage: 'sequelize',
   },
   production: {
-    url,
+    url: process.env.DB_NAME,
     dialect: 'postgres',
     seederStorage: 'sequelize',
     logging: false,
@@ -24,7 +20,6 @@ module.exports = {
       ssl: {
         require: true,
         rejectUnauthorized: false,
-        ca: [fs.readFileSync(process.env.CERT_PATH)],
       },
       // statement_timeout: 6000,
       // query_timeout: 6000,
