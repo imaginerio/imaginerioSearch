@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Layer extends Model {
     static associate(models) {
       Layer.hasMany(models.Feature);
+      Layer.belongsTo(models.Folder);
     }
   }
   Layer.init(
