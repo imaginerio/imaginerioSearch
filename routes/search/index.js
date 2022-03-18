@@ -9,7 +9,7 @@ module.exports = router => {
       attributes: ['id', 'title'],
       include: {
         association: 'Features',
-        attributes: ['id', 'name'],
+        attributes: ['id', 'name', 'firstyear', 'lastyear', 'creator'],
         where: {
           firstyear: {
             [Sequelize.Op.lte]: parseInt(year, 10),

@@ -35,7 +35,7 @@ module.exports = router => {
         attributes: ['id', 'title'],
         include: {
           association: 'Features',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'firstyear', 'lastyear', 'creator'],
           where: query,
         },
       });
@@ -45,7 +45,7 @@ module.exports = router => {
         attributes: ['id', 'title'],
         include: {
           association: 'Documents',
-          attributes: ['id', 'title', 'ssid', 'thumbnail'],
+          attributes: ['id', 'title', 'ssid', 'thumbnail', 'firstyear', 'lastyear', 'creator'],
           where: query,
         },
       });
