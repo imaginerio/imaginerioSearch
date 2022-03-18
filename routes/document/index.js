@@ -11,20 +11,30 @@ module.exports = router => {
         association: 'Visual',
         attributes: ['title'],
       },
-    }).then(document =>
-      res.send({
-        type: 'FeatureCollection',
-        features: [
-          {
-            type: 'Feature',
-            properties: {
-              ...omit(document.dataValues, 'Visual', 'VisualId', 'geom', 'updatedAt', 'createdAt'),
-              type: document.Visual.title,
+    }).then(document => {
+      if (document) {
+        return res.send({
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              properties: {
+                ...omit(
+                  document.dataValues,
+                  'Visual',
+                  'VisualId',
+                  'geom',
+                  'updatedAt',
+                  'createdAt'
+                ),
+                type: document.Visual.title,
+              },
+              geometry: document.geom,
             },
-            geometry: document.geom,
-          },
-        ],
-      })
-    )
+          ],
+        });
+      }
+      return res.send({});
+    })
   );
 };
