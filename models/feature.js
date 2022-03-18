@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       lastyear: DataTypes.INTEGER,
       LayerId: DataTypes.INTEGER,
       type: DataTypes.TEXT,
+      creator: DataTypes.TEXT,
       geom: DataTypes.GEOMETRY,
       updated: DataTypes.BOOLEAN,
     },
