@@ -1,4 +1,4 @@
-const { Layer, Feature, Sequelize } = require('../../models');
+const { Folder, Layer, Feature, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/layers', (req, res) => {
@@ -15,19 +15,31 @@ module.exports = router => {
       };
     }
 
-    return Layer.findAll({ attributes: ['id', 'name', 'title'] }).then(layers =>
+    return Folder.findAll({
+      include: {
+        model: Layer,
+        attributes: ['id', 'name', 'title'],
+      },
+    }).then(folders =>
       Feature.findAll({
         where,
         attributes: ['LayerId', 'type'],
         group: ['LayerId', 'type'],
         order: ['LayerId', 'type'],
       }).then(types => {
-        const result = layers
-          .map(l => ({
-            ...l.dataValues,
-            types: types.filter(t => t.LayerId === l.id).map(t => t.type),
+        const result = folders
+          .map(f => ({
+            id: f.dataValues.id,
+            name: f.dataValues.name,
+            layers: f.Layers.map(l => ({
+              ...l.dataValues,
+              types: types
+                .filter(t => t.LayerId === l.id)
+                .map(t => t.type)
+                .filter(t => t),
+            })).filter(l => l.types && l.types.length),
           }))
-          .filter(l => l.types && l.types.length);
+          .filter(f => f.layers && f.layers.length);
         res.send(result);
       })
     );

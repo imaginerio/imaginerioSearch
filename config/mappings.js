@@ -12,5 +12,30 @@ module.exports = {
       { db: 'artstor', remote: 'ssc_id' },
     ],
     feature: [{ db: 'namealt', remote: 'nameshort' }],
+    folders: [
+      {
+        name: 'Urbanism',
+        layers: [
+          'PhysicalPoint',
+          'BuildingsPoly',
+          'UtilitiesLine',
+          'PublicSpacesPoly',
+          'UtilitiesPoly',
+          'NeighborhoodsPoly',
+          'RoadsLine',
+        ],
+        defaultFolder: true,
+      },
+      {
+        name: 'Landscape',
+        layers: [
+          'InlandWatersLine',
+          'GroundCoverPoly',
+          'InlandWatersPoly',
+          'CoastLine',
+          'LandPoly',
+        ],
+      },
+    ],
   },
 };
