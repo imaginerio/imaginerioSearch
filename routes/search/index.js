@@ -24,6 +24,9 @@ module.exports = router => {
             Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('namealt')), {
               [Sequelize.Op.iLike]: `%${text}%`,
             }),
+            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('creator')), {
+              [Sequelize.Op.iLike]: `%${text}%`,
+            }),
           ],
         },
       },
