@@ -28,17 +28,21 @@ module.exports = router => {
               Sequelize.fn(
                 'ST_Intersects',
                 Sequelize.fn(
-                  'ST_Buffer',
+                  'ST_Transform',
                   Sequelize.fn(
-                    'ST_Transform',
+                    'ST_Buffer',
                     Sequelize.fn(
-                      'ST_SetSRID',
-                      Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geom)),
-                      4326
+                      'ST_Transform',
+                      Sequelize.fn(
+                        'ST_SetSRID',
+                        Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geom)),
+                        4326
+                      ),
+                      3857
                     ),
-                    3857
+                    500
                   ),
-                  500
+                  4326
                 ),
                 Sequelize.col('geom')
               ),

@@ -10,13 +10,17 @@ module.exports = router => {
     if (type !== 'features' && type !== 'views') return res.sendStatus(500);
 
     let geom = Sequelize.fn(
-      'ST_Buffer',
+      'ST_Transform',
       Sequelize.fn(
-        'ST_Transform',
-        Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', ...location), 4326),
-        3857
+        'ST_Buffer',
+        Sequelize.fn(
+          'ST_Transform',
+          Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', ...location), 4326),
+          3857
+        ),
+        100
       ),
-      100
+      4326
     );
     if (location.length === 4) geom = Sequelize.fn('ST_MakeEnvelope', ...location, 4326);
 
