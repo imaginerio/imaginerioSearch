@@ -18,7 +18,7 @@ module.exports = router => {
           Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', ...location), 4326),
           3857
         ),
-        100
+        50
       ),
       4326
     );
