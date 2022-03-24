@@ -11,8 +11,12 @@ module.exports = router => {
 
     let geom = Sequelize.fn(
       'ST_Buffer',
-      Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', ...location), 4326),
-      0.0001
+      Sequelize.fn(
+        'ST_Transform',
+        Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', ...location), 4326),
+        3857
+      ),
+      100
     );
     if (location.length === 4) geom = Sequelize.fn('ST_MakeEnvelope', ...location, 4326);
 
