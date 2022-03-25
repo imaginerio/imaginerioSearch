@@ -33,7 +33,7 @@ module.exports = {
     });
   },
   down: async queryInterface => {
-    await queryInterface.dropTable('Folders');
     await queryInterface.removeColumn('Layers', 'FolderId');
+    await queryInterface.dropTable('Folders');
   },
 };
