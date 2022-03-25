@@ -1,5 +1,22 @@
 module.exports = {
   highways: {
+    folders: [
+      {
+        name: 'Urbanism',
+        layers: [
+          'RoadsLine',
+          'UtilitiesLine',
+          'WaterWorksPoly',
+          'OpenSpacesPoly',
+          'BoundariesPoly',
+        ],
+        defaultFolder: true,
+      },
+      {
+        name: 'Landscape',
+        layers: ['HidrographyLine', 'GroundCoverPoly', 'HidrographyPoly'],
+      },
+    ],
     document: [
       { db: 'ssid', remote: 'image_id' },
       { db: 'artstor', remote: 'artstor_id' },
