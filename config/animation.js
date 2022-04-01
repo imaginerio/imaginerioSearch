@@ -10,19 +10,19 @@ module.exports = {
       frames: [
         {
           directory: '3',
-          label: '3m',
+          label: 'D1',
         },
         {
           directory: '2',
-          label: '2m',
+          label: 'D2',
         },
         {
           directory: '1',
-          label: '1m',
+          label: 'D3',
         },
         {
           directory: '0',
-          label: '0m',
+          label: 'D4',
         },
       ],
     },
