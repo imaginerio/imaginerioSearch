@@ -7,10 +7,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      titleEN: {
+      key: {
+        type: Sequelize.TEXT,
+        unique: true,
+      },
+      titleEn: {
         type: Sequelize.TEXT,
       },
-      titlePT: {
+      titlePt: {
         type: Sequelize.TEXT,
       },
       LayerId: {

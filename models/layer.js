@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   Layer.init(
     {
-      name: DataTypes.TEXT,
+      name: {
+        type: DataTypes.TEXT,
+        unique: true,
+      },
       titleEn: DataTypes.TEXT,
       titlePt: DataTypes.TEXT,
       remoteId: DataTypes.INTEGER,

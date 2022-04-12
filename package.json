@@ -19,6 +19,7 @@
     "body-parser": "^1.19.0",
     "colorbrewer": "^1.5.1",
     "cors": "^2.8.5",
+    "csv-parse": "^5.0.4",
     "d3-array": "2",
     "d3-scale": "3",
     "dotenv": "^8.2.0",

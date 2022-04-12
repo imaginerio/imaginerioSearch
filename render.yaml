@@ -22,6 +22,8 @@ services:
         value: true
       - key: MAPPING
         value: rio
+      - key: NAMES_CSV
+        value: types.csv
       - key: DB_NAME
         value: imaginerio
         previewValue: imaginerio_beta
@@ -52,6 +54,8 @@ services:
         value: true
       - key: MAPPING
         value: rio
+      - key: NAMES_CSV
+        value: types.csv
       - key: DB_NAME
         value: imaginerio
         previewValue: imaginerio_beta

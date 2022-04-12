@@ -9,8 +9,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Type.init(
     {
-      titleEN: DataTypes.TEXT,
-      titlePT: DataTypes.TEXT,
+      key: {
+        type: DataTypes.TEXT,
+        unique: true,
+      },
+      titleEn: DataTypes.TEXT,
+      titlePt: DataTypes.TEXT,
     },
     {
       sequelize,
