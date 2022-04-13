@@ -43,7 +43,7 @@ module.exports = {
           let types = await layer.getTypes();
           if (!types || !types.length) {
             const typeLoader = uniq(validFeatures.map(f => f.properties.type)).map(t => ({
-              key: t.replace(/\W/gi, '-'),
+              key: t.toLowerCase().replace(/\W/gi, '-'),
               titleEn: t,
               titlePt: t,
             }));
@@ -53,7 +53,9 @@ module.exports = {
             ...mapProperties({ properties: feature.properties, type: 'feature' }),
             id: `'${uuid()}'`,
             LayerId: layer.id,
-            TypeId: types.find(t => t.name === feature.properties.type.replace(/\W/gi, '-')),
+            TypeId: types.find(
+              t => t.key === feature.properties.type.toLowerCase().replace(/\W/gi, '-')
+            )?.dataValues.id,
             geom: Sequelize.fn(
               'ST_SetSRID',
               Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
@@ -79,6 +81,9 @@ module.exports = {
         });
         await layer.save();
       } else {
+        await layer.update({
+          remoteId: l.id,
+        });
         await Feature.update(
           {
             updated: true,
