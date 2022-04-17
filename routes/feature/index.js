@@ -1,11 +1,20 @@
-const { Feature, Sequelize } = require('../../models');
+const { Feature, Type, Sequelize } = require('../../models');
 
 module.exports = router => {
   router.get('/feature/:id', (req, res) => {
     const { id } = req.params;
     const { year } = req.query;
+    const lang = req.query.lang === 'pt' ? 'Pt' : 'En';
+
     if (!id || !year) return res.sendStatus(500);
-    return Feature.findByPk(id, { attributes: ['id', 'name', 'type', 'geom'] }).then(feature => {
+
+    return Feature.findByPk(id, {
+      attributes: ['id', 'name', 'geom'],
+      include: {
+        model: Type,
+        attributes: [[`title${lang}`, 'title']],
+      },
+    }).then(feature => {
       if (!feature) return res.sendStatus(404);
 
       return Feature.findOne({
@@ -57,7 +66,7 @@ module.exports = router => {
           properties: {
             id: feature.id,
             name: feature.name,
-            type: feature.type,
+            type: feature.Type.dataValues.title,
           },
         })
       );

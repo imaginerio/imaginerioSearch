@@ -3,12 +3,12 @@ require('dotenv').config();
 const axios = require('axios');
 const https = require('https');
 const uuid = require('uuid').v4;
-const { range } = require('lodash');
+const { range, uniq } = require('lodash');
 
 const { authenticate } = require('../utils/auth');
 const { errorReport } = require('../utils/axiosError');
 const { mapProperties } = require('../utils/mapProperties');
-const { Feature, Layer, Sequelize } = require('../models');
+const { Feature, Layer, Type, Sequelize } = require('../models');
 
 const STEP = 500;
 const visual = [
@@ -35,15 +35,27 @@ module.exports = {
           `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=*&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
           { httpsAgent }
         )
-        .then(({ data: { features } }) => {
+        .then(async ({ data: { features } }) => {
           console.log(`${i} / ${count}`);
           const validFeatures = features
             ? features.filter(f => f.geometry && f.properties.name.trim())
             : [];
+          let types = await layer.getTypes();
+          if (!types || !types.length) {
+            const typeLoader = uniq(validFeatures.map(f => f.properties.type)).map(t => ({
+              key: t.toLowerCase().replace(/\W/gi, '-'),
+              titleEn: t,
+              titlePt: t,
+            }));
+            types = await Type.bulkdCreate(typeLoader);
+          }
           const featureLoader = validFeatures.map(feature => ({
             ...mapProperties({ properties: feature.properties, type: 'feature' }),
             id: `'${uuid()}'`,
             LayerId: layer.id,
+            TypeId: types.find(
+              t => t.key === feature.properties.type.toLowerCase().replace(/\W/gi, '-')
+            )?.dataValues.id,
             geom: Sequelize.fn(
               'ST_SetSRID',
               Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
@@ -69,6 +81,9 @@ module.exports = {
         });
         await layer.save();
       } else {
+        await layer.update({
+          remoteId: l.id,
+        });
         await Feature.update(
           {
             updated: true,

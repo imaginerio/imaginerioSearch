@@ -1,27 +1,25 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Layer extends Model {
+  class Type extends Model {
     static associate(models) {
-      Layer.hasMany(models.Feature);
-      Layer.belongsTo(models.Folder);
-      Layer.hasMany(models.Type);
+      Type.belongsTo(models.Layer);
+      Type.hasMany(models.Feature);
     }
   }
-  Layer.init(
+  Type.init(
     {
-      name: {
+      key: {
         type: DataTypes.TEXT,
         unique: true,
       },
       titleEn: DataTypes.TEXT,
       titlePt: DataTypes.TEXT,
-      remoteId: DataTypes.INTEGER,
     },
     {
       sequelize,
-      modelName: 'Layer',
+      modelName: 'Type',
     }
   );
-  return Layer;
+  return Type;
 };

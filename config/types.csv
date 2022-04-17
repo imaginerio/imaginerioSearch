@@ -1,0 +1,59 @@
+Type Name (English),Type Name (Portuguese),GIS Feature Class,Map Legend Layer Name (English),Map Legend Layer Name (Portuguese)
+Civil,Civis,BuildingsPoly,Buildings,Edificações
+Civil (Protected),Civis (Tombado),BuildingsPoly,Buildings,Edificações
+Culture,Cultura,BuildingsPoly,Buildings,Edificações
+Culture (Protected),Cultura (Tombado),BuildingsPoly,Buildings,Edificações
+Education,Educação,BuildingsPoly,Buildings,Edificações
+Education (Protected),Educação (Tombado),BuildingsPoly,Buildings,Edificações
+Health,Saúde,BuildingsPoly,Buildings,Edificações
+Health (Protected),Saúde (Tombado),BuildingsPoly,Buildings,Edificações
+Infrastructure,Infraestrutura,BuildingsPoly,Buildings,Edificações
+Infrastructure (Protected),Infraestrutura (Tombado),BuildingsPoly,Buildings,Edificações
+Military,Militares,BuildingsPoly,Buildings,Edificações
+Military (Protected),Militares (Tombado),BuildingsPoly,Buildings,Edificações
+Religion,Religião,BuildingsPoly,Buildings,Edificações
+Religion (Protected),Religião (Tombado),BuildingsPoly,Buildings,Edificações
+Transportation,Transporte,BuildingsPoly,Buildings,Edificações
+Transportation (Protected),Transporte (Tombado),BuildingsPoly,Buildings,Edificações
+Coast Line,Linha Costeira,CoastLine,Coast Line,Linha Costeira
+Built Domain,Mancha Urbana,GroundCoverPoly,Ground Cover,Cobertura Territorial
+Farm,Fazenda,GroundCoverPoly,Ground Cover,Cobertura Territorial
+Mill,Engenho,GroundCoverPoly,Ground Cover,Cobertura Territorial
+Rocky Outcrop,Afloramento Rochoso,GroundCoverPoly,Ground Cover,Cobertura Territorial
+Vegetation,Vegetação,GroundCoverPoly,Ground Cover,Cobertura Territorial
+Brooks,Riachos,InlandWatersLine,Rivers and Streams,Rios e Riachos
+Creeks,Ribeiros,InlandWatersLine,Rivers and Streams,Rios e Riachos
+Rivers,Rios,InlandWatersLine,Rivers and Streams,Rios e Riachos
+Streams,Córregos,InlandWatersLine,Rivers and Streams,Rios e Riachos
+Lagoons,Lagoas,InlandWatersPoly,Inland Water Bodies,Corpos Hídricos
+Marshes,Brejos,InlandWatersPoly,Inland Water Bodies,Corpos Hídricos
+Ponds,Represas,InlandWatersPoly,Inland Water Bodies,Corpos Hídricos
+Salty Marshes,Campos Salinos,InlandWatersPoly,Inland Water Bodies,Corpos Hídricos
+Favelas,Comunidades,NeighborhoodsPoly,Areas,Áreas
+Neighborhoods,Bairros,NeighborhoodsPoly,Areas,Áreas
+Parishes,Freguesias,NeighborhoodsPoly,Areas,Áreas
+Cliffs,Penhascos,PhysicalPoint,Topographic Features,Características Topograficas
+Peaks,Picos,PhysicalPoint,Topographic Features,Características Topograficas
+Rocks,Rochas,PhysicalPoint,Topographic Features,Características Topograficas
+Beaches,Praias,PublicSpacesPoly,Public Spaces,Espaços Públicos
+Cemeteries,Cemitérios,PublicSpacesPoly,Public Spaces,Espaços Públicos
+Gardens,Jardins,PublicSpacesPoly,Public Spaces,Espaços Públicos
+Parks,Parques,PublicSpacesPoly,Public Spaces,Espaços Públicos
+Plazas,Largos,PublicSpacesPoly,Public Spaces,Espaços Públicos
+Soccer Fields,Campos de Futebol,PublicSpacesPoly,Public Spaces,Espaços Públicos
+Squares,Praças,PublicSpacesPoly,Public Spaces,Espaços Públicos
+Alleys,Becos,RoadsLine,Roads,Vias
+Avenues,Avenidas,RoadsLine,Roads,Vias
+Expressways,Vias Expressas,RoadsLine,Roads,Vias
+Overpasses,Passarelas,RoadsLine,Roads,Vias
+Passages,Travessas,RoadsLine,Roads,Vias
+Slopes,Ladeiras,RoadsLine,Roads,Vias
+Streets,Ruas,RoadsLine,Roads,Vias
+Trails,Caminhos,RoadsLine,Roads,Vias
+Aqueducts,Aquedutos,UtilitiesLine,Water Canalization,Canalização de Água
+Canals,Canais,UtilitiesLine,Water Canalization,Canalização de Água
+Ditches,Valas,UtilitiesLine,Water Canalization,Canalização de Água
+Sewage Pipes,Canos de Esgoto,UtilitiesLine,Water Canalization,Canalização de Água
+Water Pipes,Canos de Água,UtilitiesLine,Water Canalization,Canalização de Água
+Fountains,Chafarizes,UtilitiesPoly,Water Storage and Distribution,Reservas e Distribuição de Água
+Reservoirs,Açúdes,UtilitiesPoly,Water Storage and Distribution,Reservas e Distribuição de Água
