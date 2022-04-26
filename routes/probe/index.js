@@ -6,6 +6,8 @@ module.exports = router => {
     const { year } = req.query;
     const { type } = req.params;
     const location = req.params.location.split(',');
+    const lang = req.query.lang === 'pt' ? 'Pt' : 'En';
+
     if (location.length !== 2 && location.length !== 4 && !year) return res.sendStatus(500);
     if (type !== 'features' && type !== 'views') return res.sendStatus(500);
 
@@ -40,7 +42,7 @@ module.exports = router => {
     let layers = [];
     if (type === 'features') {
       layers = await Layer.findAll({
-        attributes: ['id', 'title'],
+        attributes: ['id', [`title${lang}`, 'title']],
         include: {
           association: 'Features',
           attributes: ['id', 'name', 'firstyear', 'lastyear', 'creator'],
