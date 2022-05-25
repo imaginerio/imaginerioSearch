@@ -5,8 +5,10 @@ module.exports = router => {
   router.get('/search', (req, res) => {
     const { text, year } = req.query;
     if (!text || !year) return res.sendStatus(500);
+    const lang = req.query.lang === 'pt' ? 'Pt' : 'En';
+
     return Layer.findAll({
-      attributes: ['id', 'title'],
+      attributes: ['id', [`title${lang}`, 'title']],
       include: {
         association: 'Features',
         attributes: ['id', 'name', 'firstyear', 'lastyear', 'creator'],
