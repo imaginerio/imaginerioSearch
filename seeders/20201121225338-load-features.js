@@ -76,7 +76,7 @@ module.exports = {
       if (!layer) {
         layer = Layer.build({
           name,
-          title: l.name.replace(/(Poly|Line)$/, '').replace(/(?!^)([A-Z])/gm, ` $1`),
+          titleEn: l.name.replace(/(Poly|Line)$/, '').replace(/(?!^)([A-Z])/gm, ` $1`),
           remoteId: l.id,
         });
         await layer.save();
