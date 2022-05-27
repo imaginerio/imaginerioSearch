@@ -9,10 +9,11 @@ module.exports = {
     if (animations) {
       return Promise.all(
         Object.keys(animations).map(name =>
-          Animation.create({
+          Animation.upsert({
             name,
             ...omit(animations[name], 'frames'),
-          }).then(animation => {
+          }).then(async ([animation]) => {
+            await AnimationFrame.destroy({ where: { AnimationId: animation.id } });
             const { frames } = animations[name];
             return Promise.all(
               frames.map((frame, ordering) =>

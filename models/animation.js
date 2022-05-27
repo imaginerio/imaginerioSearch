@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   Animation.init(
     {
-      name: DataTypes.STRING,
+      name: {
+        type: DataTypes.TEXT,
+        unique: true,
+      },
       title: DataTypes.STRING,
       firstyear: DataTypes.INTEGER,
       lastyear: DataTypes.INTEGER,

@@ -5,24 +5,20 @@ module.exports = {
       firstyear: 2017,
       lastyear: 2017,
       url: 'flood',
-      maxzoom: 12,
+      maxzoom: 16,
       minzoom: 7,
       frames: [
         {
-          directory: '3',
-          label: 'D1',
+          directory: 'low',
+          label: 'Low',
         },
         {
-          directory: '2',
-          label: 'D2',
+          directory: 'medium',
+          label: 'Medium',
         },
         {
-          directory: '1',
-          label: 'D3',
-        },
-        {
-          directory: '0',
-          label: 'D4',
+          directory: 'high',
+          label: 'High',
         },
       ],
     },
