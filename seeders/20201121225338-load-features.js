@@ -47,7 +47,7 @@ module.exports = {
               titleEn: t,
               titlePt: t,
             }));
-            types = await Type.bulkdCreate(typeLoader);
+            types = await Type.bulkCreate(typeLoader);
           }
           const featureLoader = validFeatures.map(feature => ({
             ...mapProperties({ properties: feature.properties, type: 'feature' }),
