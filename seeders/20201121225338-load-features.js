@@ -41,14 +41,15 @@ module.exports = {
             ? features.filter(f => f.geometry && f.properties.name.trim())
             : [];
           let types = await layer.getTypes();
-          if (!types || !types.length) {
-            const typeLoader = uniq(validFeatures.map(f => f.properties.type)).map(t => ({
-              key: t.toLowerCase().replace(/\W/gi, '-'),
-              titleEn: t,
-              titlePt: t,
-            }));
-            types = await Type.bulkCreate(typeLoader);
-          }
+
+          const typeLoader = uniq(validFeatures.map(f => f.properties.type)).map(t => ({
+            key: t.toLowerCase().replace(/\W/gi, '-'),
+            titleEn: t,
+            titlePt: t,
+            LayerId: layer.id,
+          }));
+          types = await Type.bulkCreate(typeLoader, { ignoreDuplicates: true });
+
           const featureLoader = validFeatures.map(feature => ({
             ...mapProperties({ properties: feature.properties, type: 'feature' }),
             id: `'${uuid()}'`,
