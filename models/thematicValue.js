@@ -11,8 +11,22 @@ module.exports = (sequelize, DataTypes) => {
     {
       number: DataTypes.FLOAT,
       category: DataTypes.TEXT,
-      firstyear: DataTypes.INTEGER,
-      lastyear: DataTypes.INTEGER,
+      firstyear: {
+        type: DataTypes.INTEGER,
+        unique: 'thematicUniqueIndex',
+      },
+      lastyear: {
+        type: DataTypes.INTEGER,
+        unique: 'thematicUniqueIndex',
+      },
+      ThematicLayerId: {
+        type: DataTypes.INTEGER,
+        unique: 'thematicUniqueIndex',
+      },
+      ThematicFeatureId: {
+        type: DataTypes.INTEGER,
+        unique: 'thematicUniqueIndex',
+      },
     },
     {
       sequelize,

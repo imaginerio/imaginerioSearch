@@ -28,14 +28,16 @@ module.exports = {
           console.log(`${i} / ${count}`);
           return Promise.all(
             features.map(feature =>
-              ThematicFeature.create({
+              ThematicFeature.upsert({
                 name: feature.properties[thematicLayers[layers[0].name].name],
+                firstyear: feature.properties.firstyear,
+                lastyear: feature.properties.lastyear,
                 geom: Sequelize.fn(
                   'ST_SetSRID',
                   Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(feature.geometry)),
                   4326
                 ),
-              }).then(thematicFeature =>
+              }).then(([thematicFeature]) =>
                 ThematicValue.bulkCreate(
                   layers.map(({ id, property }) => ({
                     number: feature.properties[property],

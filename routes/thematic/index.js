@@ -1,6 +1,6 @@
 const d3Scale = require('d3-scale');
 const d3Array = require('d3-array');
-const { omit } = require('lodash');
+const { omit, sortBy } = require('lodash');
 
 const { ThematicLayer, Sequelize } = require('../../models');
 
@@ -45,11 +45,24 @@ module.exports = router => {
     res.send(layers);
   });
 
-  router.get('/thematic/:id', (req, res) =>
-    ThematicLayer.findByPk(req.params.id, {
+  router.get('/thematic/:id', (req, res) => {
+    const { year } = req.query;
+    let where = {};
+    if (year) {
+      where = {
+        firstyear: {
+          [Sequelize.Op.lte]: parseInt(year, 10),
+        },
+        lastyear: {
+          [Sequelize.Op.gte]: parseInt(year, 10),
+        },
+      };
+    }
+    return ThematicLayer.findByPk(req.params.id, {
       include: {
         association: 'ThematicValues',
         attributes: ['id', 'number'],
+        where,
         include: {
           association: 'ThematicFeature',
           attributes: ['name', 'geom'],
@@ -58,7 +71,7 @@ module.exports = router => {
     }).then(({ ThematicValues }) =>
       res.send({
         type: 'FeatureCollection',
-        features: ThematicValues.map(val => ({
+        features: sortBy(ThematicValues, t => t.ThematicFeature.name).map(val => ({
           type: 'Feature',
           id: val.id,
           properties: {
@@ -68,6 +81,6 @@ module.exports = router => {
           geometry: val.ThematicFeature.geom,
         })),
       })
-    )
-  );
+    );
+  });
 };
