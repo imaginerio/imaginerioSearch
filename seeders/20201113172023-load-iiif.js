@@ -92,7 +92,7 @@ const deleteNoIIIFDocuments = async collection => {
   const {
     data: { items },
   } = await axios.get(`${IIIF}/iiif/collection/${collection}.json`);
-  return Document.select({
+  return Document.findMany({
     attributes: ['ssid'],
     where: {
       ssid: {
