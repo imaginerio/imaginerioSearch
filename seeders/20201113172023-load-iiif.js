@@ -92,14 +92,27 @@ const deleteNoIIIFDocuments = async collection => {
   const {
     data: { items },
   } = await axios.get(`${IIIF}/iiif/collection/${collection}.json`);
-  return Document.destroy({
+  return Document.select({
+    attributes: ['ssid'],
     where: {
       ssid: {
         [Sequelize.Op.notIn]: items.map(i => i.id.replace(/.*?\/iiif\/(.*?)\/manifest.*/gi, '$1')),
       },
       VisualId: visual.id,
     },
-  }).then(deleted => console.log(`${deleted} items deleted from ${collection}`));
+  }).then(deleted => {
+    console.log(`${deleted.map(d => d.ssid).join('; ')} items deleted from ${collection}`);
+    return Document.destroy({
+      where: {
+        ssid: {
+          [Sequelize.Op.notIn]: items.map(i =>
+            i.id.replace(/.*?\/iiif\/(.*?)\/manifest.*/gi, '$1')
+          ),
+        },
+        VisualId: visual.id,
+      },
+    });
+  });
 };
 
 const loadCollection = collection => {
