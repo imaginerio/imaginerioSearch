@@ -32,7 +32,7 @@ module.exports = {
     const stepLoader = (layer, i, count) =>
       axios
         .get(
-          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=*&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
+          `https://gis.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${layer.remoteId}/query?where=name%20IS%20NOT%20NULL&outFields=*&f=geojson&resultRecordCount=${STEP}&resultOffset=${i}&token=${token}`,
           { httpsAgent }
         )
         .then(async ({ data: { features } }) => {
@@ -99,7 +99,7 @@ module.exports = {
       }
       return axios
         .get(
-          `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true&token=${token}`,
+          `https://gis.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/${l.id}/query?where=objectid IS NOT NULL&f=json&returnCountOnly=true&token=${token}`,
           { httpsAgent }
         )
         .then(({ data: { count } }) =>
@@ -150,7 +150,7 @@ module.exports = {
     let {
       data: { layers },
     } = await axios.get(
-      `https://enterprise.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/layers?f=json&token=${token}`,
+      `https://gis.spatialstudieslab.org/server/rest/services/Hosted/${process.env.DATABASE}/FeatureServer/layers?f=json&token=${token}`,
       { httpsAgent }
     );
     layers = layers.filter(l => !visual.includes(l.name) && !OMIT.includes(l.name));
