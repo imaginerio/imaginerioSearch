@@ -42,7 +42,7 @@ module.exports = {
             : [];
 
           const typeLoader = uniq(validFeatures.map(f => f.properties.type)).map(t => ({
-            key: t.toLowerCase().replace(/\W/gi, '-'),
+            key: t?.toLowerCase().replace(/\W/gi, '-'),
             titleEn: t,
             titlePt: t,
             LayerId: layer.id,
@@ -56,7 +56,7 @@ module.exports = {
             id: `'${uuid()}'`,
             LayerId: layer.id,
             TypeId: types.find(
-              t => t.key === feature.properties.type.toLowerCase().replace(/\W/gi, '-')
+              t => t.key === feature.properties.type?.toLowerCase().replace(/\W/gi, '-')
             )?.dataValues.id,
             geom: Sequelize.fn(
               'ST_SetSRID',
