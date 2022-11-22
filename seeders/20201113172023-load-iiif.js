@@ -46,7 +46,7 @@ const parseLink = (link, label, DocumentId) => ({
   DocumentId,
   label,
   key: label,
-  value: link.map(l => l.label.none[0]),
+  value: link.map(l => Object.values(l)[0]),
   link: link.map(l => l.id),
 });
 
