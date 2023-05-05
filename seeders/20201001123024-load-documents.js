@@ -32,6 +32,7 @@ module.exports = {
         )
         .then(({ data: { features } }) => {
           console.log(`${i} / ${count}`);
+          if (!features) return Promise.resolve();
           const featureLoader = features.map(feature => {
             const properties = mapProperties({ properties: feature.properties, type: 'document' });
             if (!properties.longitude || !properties.latitude) {
