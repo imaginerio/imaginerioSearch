@@ -42,13 +42,18 @@ const parseIIIF = (metadata, DocumentId) => {
   return meta;
 };
 
-const parseLink = (link, label, DocumentId) => ({
-  DocumentId,
-  label,
-  key: label,
-  value: link.map(l => l.label.none[0]),
-  link: link.map(l => l.id),
-});
+const parseLink = (link, label, DocumentId) => {
+  const isValid = link.every(l =>
+    l.id.match(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/)
+  );
+  return {
+    DocumentId,
+    label,
+    key: label,
+    value: link.map(l => Object.values(l.label)[0][0]),
+    link: isValid ? link.map(l => l.id) : null,
+  };
+};
 
 const loadManifest = (manifest, document) =>
   axios
