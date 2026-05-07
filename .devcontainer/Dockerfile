@@ -1,5 +1,5 @@
-# Update the VARIANT arg in docker-compose.yml to pick a Node version: 10, 12, 14
-ARG VARIANT=14
+# Update the VARIANT arg in docker-compose.yml to pick a Node version
+ARG VARIANT=20
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
 
 # Update args in docker-compose.yaml to set the UID/GID of the "node" user.
@@ -22,5 +22,5 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
 
 # [Optional] Uncomment if you want to install more global node packages
-RUN sudo -u node npm install -g sequelize-cli nodemon jest-cli ponicode@latest
+RUN sudo -u node npm install -g sequelize-cli nodemon jest-cli
 

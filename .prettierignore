@@ -1,4 +1,8 @@
 .cache
-package.json
+node_modules
+yarn.lock
 package-lock.json
 public
+coverage
+.git
+.husky/_

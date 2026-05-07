@@ -4,14 +4,31 @@
   "description": "Search API for imagineRio tools",
   "main": "index.js",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "npx nodemon index.js",
     "start": "cross-env NODE_ENV=production node index.js",
     "test": "cross-env NODE_ENV=test npx sequelize-cli db:migrate:undo:all && cross-env NODE_ENV=test yarn db:migrate && cross-env NODE_ENV=test yarn jest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:job": "yarn db:migrate && node startup",
-    "db:migrate:reset": "npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed"
+    "db:migrate:reset": "npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed",
+    "prepare": "husky || true"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@turf/centroid": "^6.0.2",
@@ -40,8 +57,10 @@
     "eslint-plugin-jest": "^24.3.4",
     "eslint-plugin-prettier": "^3.1.4",
     "faker": "^5.5.3",
+    "husky": "^9.1.7",
     "jest": "^26.6.3",
     "jest-cli": "^26.6.3",
+    "lint-staged": "^15.2.10",
     "prettier": "^2.2.0",
     "prettier-eslint": "^12.0.0",
     "rewire": "^5.0.0",
