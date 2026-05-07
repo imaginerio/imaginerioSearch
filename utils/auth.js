@@ -1,36 +1,41 @@
-/* eslint-disable camelcase */
-require('dotenv');
 const axios = require('axios');
-const https = require('https');
 
-exports.authenticate = () => {
+const PORTAL = 'https://gis.spatialstudieslab.org/portal/sharing';
+
+const enc = encodeURIComponent;
+
+const authenticate = async () => {
   const { CLIENT_ID, USERNAME, PASSWORD } = process.env;
-  const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-  return axios
-    .get(
-      `https://gis.spatialstudieslab.org/portal/sharing/rest/oauth2/authorize/?client_id=${CLIENT_ID}&response_type=code&expiration=3600&redirect_uri=urn:ietf:wg:oauth:2.0:oob`,
-      { httpsAgent }
-    )
-    .then(({ data }) => {
-      const oauth = data.replace(/^.*"oauth_state":"(.*?)".*$/gs, '$1');
-      return axios
-        .post(
-          `https://gis.spatialstudieslab.org/portal/sharing/oauth2/signin?oauth_state=${oauth}&authorize=true&username=${USERNAME}&password=${PASSWORD}`,
-          {},
-          { httpsAgent }
-        )
-        .then(res => {
-          const code = res.data.replace(/^.*id="code" value="(.*?)".*$/gs, '$1');
-          return axios
-            .post(
-              `https://gis.spatialstudieslab.org/portal/sharing/oauth2/token?client_id=${CLIENT_ID}&code=${code}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&grant_type=authorization_code`,
-              {},
-              { httpsAgent }
-            )
-            .then(res2 => {
-              const { access_token } = res2.data;
-              return access_token;
-            });
-        });
-    });
+  if (!CLIENT_ID || !USERNAME || !PASSWORD) {
+    throw new Error('CLIENT_ID, USERNAME, and PASSWORD env vars are required');
+  }
+
+  const authorizeUrl =
+    `${PORTAL}/rest/oauth2/authorize/` +
+    `?client_id=${enc(CLIENT_ID)}` +
+    `&response_type=code` +
+    `&expiration=3600` +
+    `&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
+  const { data: authorizePage } = await axios.get(authorizeUrl);
+  const oauthState = authorizePage.replace(/^.*"oauth_state":"(.*?)".*$/gs, '$1');
+
+  const signinUrl =
+    `${PORTAL}/oauth2/signin` +
+    `?oauth_state=${enc(oauthState)}` +
+    `&authorize=true` +
+    `&username=${enc(USERNAME)}` +
+    `&password=${enc(PASSWORD)}`;
+  const { data: signinPage } = await axios.post(signinUrl);
+  const code = signinPage.replace(/^.*id="code" value="(.*?)".*$/gs, '$1');
+
+  const tokenUrl =
+    `${PORTAL}/oauth2/token` +
+    `?client_id=${enc(CLIENT_ID)}` +
+    `&code=${enc(code)}` +
+    `&redirect_uri=urn:ietf:wg:oauth:2.0:oob` +
+    `&grant_type=authorization_code`;
+  const { data: tokenResponse } = await axios.post(tokenUrl);
+  return tokenResponse.access_token;
 };
+
+exports.authenticate = authenticate;
