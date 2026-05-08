@@ -31,6 +31,9 @@
     ]
   },
   "dependencies": {
+    "@esri/arcgis-rest-auth": "^3.8.0",
+    "@esri/arcgis-rest-feature-layer": "^3.8.0",
+    "@esri/arcgis-rest-request": "^3.8.0",
     "@turf/centroid": "^6.0.2",
     "axios": "^1.7",
     "body-parser": "^1.19.0",

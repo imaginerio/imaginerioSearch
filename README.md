@@ -41,7 +41,7 @@ See `.env.example` for the full list. The most commonly missed:
 - `DB_URL` — required outside dev (no default in `production`)
 - `STARTUP=1` — turns on the ingestion pipeline at boot
 - `MAPPING` — selects the site config (e.g. `rio`); used by seeders and `utils/mapProperties.js`
-- `CLIENT_ID` / `USERNAME` / `PASSWORD` — credentials for the ArcGIS OAuth flow in `utils/auth.js`
+- `ARCGIS_API_KEY` — API key for the imagineRio_GDB FeatureServer; consumed by the seeders via `utils/arcgisClient.js`
 
 ## API surface
 
@@ -66,7 +66,7 @@ All routes are GET. Wired up via `server.js` auto-loading every directory under 
 config/        # config.js (Sequelize), mappings, thematic + animation site configs
 models/        # Sequelize models
 routes/        # one folder per HTTP route, auto-loaded by server.js
-utils/         # auth, encoding fixers, axios error helper, property mapping
+utils/         # ArcGIS client, encoding fixers, property mapping
 migrations/    # Sequelize migrations (28+)
 seeders/       # Sequelize seeders that pull from ArcGIS feature services
 startup/       # ingestion runner invoked when STARTUP env is set
