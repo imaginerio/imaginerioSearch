@@ -1,52 +1,53 @@
 const { omit } = require('lodash');
+const { z } = require('zod');
 const { Visual, Sequelize } = require('../../models');
 const { attachImageMeta } = require('../../utils/attachImageMeta');
+const asyncHandler = require('../../utils/asyncHandler');
+const validate = require('../../utils/validate');
+
+const documentsSchema = z.object({
+  query: z.object({
+    year: z.coerce.number().int().optional(),
+    visual: z.string().optional(),
+  }),
+});
 
 module.exports = router => {
-  router.get('/documents', (req, res) => {
-    const { year, visual } = req.query;
-    let where = {};
-    if (year) {
-      where = {
-        firstyear: {
-          [Sequelize.Op.lte]: parseInt(year, 10),
-        },
-        lastyear: {
-          [Sequelize.Op.gte]: parseInt(year, 10),
-        },
-      };
-    }
+  router.get(
+    '/documents',
+    validate(documentsSchema),
+    asyncHandler(async (req, res) => {
+      const { year, visual } = req.query;
+      const where = year
+        ? {
+            firstyear: { [Sequelize.Op.lte]: year },
+            lastyear: { [Sequelize.Op.gte]: year },
+          }
+        : {};
+      const visualWhere = visual ? { title: { [Sequelize.Op.iLike]: visual } } : {};
 
-    let visualWhere = {};
-    if (visual) {
-      visualWhere = {
-        title: {
-          [Sequelize.Op.iLike]: visual,
-        },
-      };
-    }
-
-    return Visual.findAll({
-      attributes: ['id', 'title'],
-      where: visualWhere,
-      include: {
-        association: 'Documents',
-        attributes: [
-          'ssid',
-          'title',
-          'latitude',
-          'longitude',
-          'firstyear',
-          'lastyear',
-          'thumbnail',
-        ],
-        where,
+      const layers = await Visual.findAll({
+        attributes: ['id', 'title'],
+        where: visualWhere,
         include: {
-          association: 'ImageMeta',
-          attributes: [['key', 'label'], 'value', 'link'],
+          association: 'Documents',
+          attributes: [
+            'ssid',
+            'title',
+            'latitude',
+            'longitude',
+            'firstyear',
+            'lastyear',
+            'thumbnail',
+          ],
+          where,
+          include: {
+            association: 'ImageMeta',
+            attributes: [['key', 'label'], 'value', 'link'],
+          },
         },
-      },
-    }).then(layers => {
+      });
+
       const response = layers
         .filter(l => l.Documents.length)
         .map(l => ({
@@ -56,7 +57,8 @@ module.exports = router => {
             ...attachImageMeta(d.ImageMeta),
           })),
         }));
-      return res.send(response);
-    });
-  });
+
+      res.send(response);
+    })
+  );
 };
