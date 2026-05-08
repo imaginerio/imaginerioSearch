@@ -8,14 +8,6 @@ const logger = pino({
     paths: ['req.headers.authorization', 'req.headers.cookie', '*.password', '*.token'],
     remove: true,
   },
-  ...(isProd
-    ? {}
-    : {
-        transport: {
-          target: 'pino/file',
-          options: { destination: 1 },
-        },
-      }),
 });
 
 module.exports = logger;

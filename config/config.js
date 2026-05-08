@@ -23,7 +23,10 @@ module.exports = {
     seederStorage: 'sequelize',
   },
   test: {
-    url: 'postgresql://postgres:postgres@127.0.0.1/imagineriotest',
+    url:
+      process.env.TEST_DB_URL ||
+      process.env.DB_URL ||
+      'postgresql://postgres:postgres@127.0.0.1/imagineriotest',
     dialect: 'postgres',
     seederStorage: 'sequelize',
   },

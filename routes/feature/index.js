@@ -74,7 +74,7 @@ module.exports = router => {
         properties: {
           id: feature.id,
           name: feature.name,
-          type: feature.Type.dataValues.title,
+          type: feature.Type?.dataValues.title,
         },
       });
     })
