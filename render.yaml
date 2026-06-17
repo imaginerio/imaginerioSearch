@@ -2,14 +2,13 @@
 #
 # Prerequisites that must exist in the Render workspace BEFORE syncing this
 # blueprint (they are referenced here but not defined by it):
-#   - Env group "tile-generator"     (shared with the vector-tile-generator)
+#   - Env group "tile-generator"     (shared; also holds ARCGIS_API_KEY)
 #   - Env group "imaginerio-search"  (shared secrets for the seeder cron)
 #   - Env group "scalegrid"          (legacy DB credentials, seeder cron)
 #
-# Manual step after first sync:
-#   - Set ARCGIS_API_KEY (sync: false) in the dashboard for both the web
-#     service and the seeder cron — it is a secret and is intentionally not
-#     stored in this file.
+# ARCGIS_API_KEY is stored in the "tile-generator" env group (not in this file
+# and not as a per-service sync:false var). Sourcing it from the group means
+# preview environments inherit it automatically.
 # Plan tiers below are sized for the current ~67 MB dataset (web Starter,
 # DB basic-256mb, seeder cron Starter). All scale up in place later.
 # Slug spellings validated against the Render plan list (note: service plans
@@ -29,8 +28,6 @@ services:
     initialDeployHook: yarn db:job
     envVars:
       - fromGroup: tile-generator
-      - key: ARCGIS_API_KEY
-        sync: false
       - key: IIIF
         value: https://iiif.imaginerio.org
       - key: COLLECTIONS
@@ -59,8 +56,6 @@ services:
       - fromGroup: tile-generator
       - fromGroup: imaginerio-search
       - fromGroup: scalegrid
-      - key: ARCGIS_API_KEY
-        sync: false
       - key: IIIF
         value: https://iiif.imaginerio.org
       - key: COLLECTIONS
