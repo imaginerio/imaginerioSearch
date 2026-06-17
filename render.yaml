@@ -1,9 +1,31 @@
+# Render Blueprint — imaginerio-search
+#
+# Prerequisites that must exist in the Render workspace BEFORE syncing this
+# blueprint (they are referenced here but not defined by it):
+#   - Env group "tile-generator"     (shared with the vector-tile-generator)
+#   - Env group "imaginerio-search"  (shared secrets for the seeder cron)
+#   - Env group "scalegrid"          (legacy DB credentials, seeder cron)
+#
+# Manual step after first sync:
+#   - Set ARCGIS_API_KEY (sync: false) in the dashboard for both the web
+#     service and the seeder cron — it is a secret and is intentionally not
+#     stored in this file.
+#
+# TODO (needs decision before applying):
+#   - plan: tiers are not pinned below. Set them explicitly to your account's
+#     intended tier so deploys are predictable (commented placeholders mark
+#     where). Guessing plan slugs can fail blueprint validation.
+#   - Database is still postgresMajorVersion 13, which is EOL (Nov 2025). Bump
+#     to a supported major (e.g. 16) on a FRESH database; the major version of
+#     an existing Render database cannot be changed in place via blueprint.
+
 previewsEnabled: true
 services:
   - type: web
     name: imaginerio-search
     region: oregon
-    env: node
+    runtime: node
+    # plan: starter   # set to your intended tier
     healthCheckPath: /health
     buildCommand: yarn
     startCommand: yarn db:migrate && yarn start
@@ -24,9 +46,6 @@ services:
         value: rio
       - key: NAMES_CSV
         value: types.csv
-      - key: DB_NAME
-        value: imaginerio
-        previewValue: imaginerio_beta
       - key: DB_URL
         fromDatabase:
           name: imaginerio
@@ -34,7 +53,7 @@ services:
   - type: cron
     name: imaginerio-database-seeder
     region: oregon
-    env: node
+    runtime: node
     buildCommand: yarn
     startCommand: yarn db:job
     schedule: '1 0 * * 6'
@@ -56,9 +75,6 @@ services:
         value: rio
       - key: NAMES_CSV
         value: types.csv
-      - key: DB_NAME
-        value: imaginerio
-        previewValue: imaginerio_beta
       - key: DB_URL
         fromDatabase:
           name: imaginerio
@@ -66,7 +82,7 @@ services:
   - type: cron
     name: imaginerio-vector-tile-generator
     region: oregon
-    env: docker
+    runtime: docker
     schedule: '1 0 * * 6'
     plan: pro
     repo: https://github.com/imaginerio/vector-tile-generator.git
@@ -80,4 +96,5 @@ services:
         value: 18
 databases:
   - name: imaginerio
-    postgresMajorVersion: 13
+    # plan: basic-256mb   # set to your intended tier
+    postgresMajorVersion: 13 # EOL Nov 2025 — bump to 16 on a fresh database
