@@ -13,8 +13,9 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
     fi
 
 # [Optional] Install additional OS packages. (yarn is preinstalled in this image.)
+# gh is the GitHub CLI, used for push/PR operations from inside the container.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends postgresql-client \
+    && apt-get -y install --no-install-recommends postgresql-client gh \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # [Optional] Uncomment if you want to install an additional version of node using nvm
