@@ -64,8 +64,10 @@ describe('test document API route', () => {
     expect(response.status).toEqual(404);
   });
 
-  // After all tersts have finished, close the DB connection
+  // Remove this suite's fixtures (children first for FK safety), then close the DB.
   afterAll(async () => {
+    await document.destroy();
+    await visual.destroy();
     await sequelize.close();
   });
 });
