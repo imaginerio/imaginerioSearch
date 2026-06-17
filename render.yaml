@@ -12,9 +12,10 @@
 #     stored in this file.
 #
 # Plan tiers below are sized for the current ~67 MB dataset (web Starter,
-# DB Basic-256MB, seeder cron Starter). All scale up in place later. Confirm
-# the exact plan slug spellings against the account at first sync — Render has
-# changed them over time and a wrong slug fails blueprint validation.
+# DB basic-256mb, seeder cron Starter). All scale up in place later.
+# Slug spellings validated against the Render plan list (note: service plans
+# use one word, e.g. "starter"; database/pro plans are hyphenated, e.g.
+# "basic-256mb", "pro-4gb").
 
 previewsEnabled: true
 services:
@@ -94,5 +95,5 @@ services:
         value: 18
 databases:
   - name: imaginerio
-    plan: basic_256mb
-    postgresMajorVersion: 16
+    plan: basic-256mb
+    postgresMajorVersion: '16'
