@@ -11,10 +11,10 @@
 #     service and the seeder cron — it is a secret and is intentionally not
 #     stored in this file.
 #
-# TODO (needs decision before applying):
-#   - plan: tiers are not pinned below. Set them explicitly to your account's
-#     intended tier so deploys are predictable (commented placeholders mark
-#     where). Guessing plan slugs can fail blueprint validation.
+# Plan tiers below are sized for the current ~67 MB dataset (web Starter,
+# DB Basic-256MB, seeder cron Starter). All scale up in place later. Confirm
+# the exact plan slug spellings against the account at first sync — Render has
+# changed them over time and a wrong slug fails blueprint validation.
 
 previewsEnabled: true
 services:
@@ -22,7 +22,7 @@ services:
     name: imaginerio-search
     region: oregon
     runtime: node
-    # plan: starter   # set to your intended tier
+    plan: starter
     healthCheckPath: /health
     buildCommand: yarn
     startCommand: yarn db:migrate && yarn start
@@ -51,6 +51,7 @@ services:
     name: imaginerio-database-seeder
     region: oregon
     runtime: node
+    plan: starter
     buildCommand: yarn
     startCommand: yarn db:job
     schedule: '1 0 * * 6'
@@ -93,5 +94,5 @@ services:
         value: 18
 databases:
   - name: imaginerio
-    # plan: basic-256mb   # set to your intended tier
+    plan: basic_256mb
     postgresMajorVersion: 16
