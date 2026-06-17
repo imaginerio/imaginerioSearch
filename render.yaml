@@ -15,9 +15,6 @@
 #   - plan: tiers are not pinned below. Set them explicitly to your account's
 #     intended tier so deploys are predictable (commented placeholders mark
 #     where). Guessing plan slugs can fail blueprint validation.
-#   - Database is still postgresMajorVersion 13, which is EOL (Nov 2025). Bump
-#     to a supported major (e.g. 16) on a FRESH database; the major version of
-#     an existing Render database cannot be changed in place via blueprint.
 
 previewsEnabled: true
 services:
@@ -97,4 +94,4 @@ services:
 databases:
   - name: imaginerio
     # plan: basic-256mb   # set to your intended tier
-    postgresMajorVersion: 13 # EOL Nov 2025 — bump to 16 on a fresh database
+    postgresMajorVersion: 16
