@@ -1,5 +1,5 @@
-# Update the VARIANT arg in docker-compose.yml to pick a Node version: 10, 12, 14
-ARG VARIANT=14
+# Update the VARIANT arg in docker-compose.yml to pick a Node version
+ARG VARIANT=20
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
 
 # Update args in docker-compose.yaml to set the UID/GID of the "node" user.
@@ -12,15 +12,17 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then \
         && chown -R $USER_UID:root /usr/local/share/nvm /usr/local/share/npm-global; \
     fi
 
-# [Optional] Uncomment this section to install additional OS packages.
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
-    && apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends postgresql-client
+# [Optional] Install additional OS packages. (yarn is preinstalled in this image.)
+# gh is the GitHub CLI, used for push/PR operations from inside the container.
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends postgresql-client gh \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # [Optional] Uncomment if you want to install an additional version of node using nvm
 # ARG EXTRA_NODE_VERSION=10
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
 
 # [Optional] Uncomment if you want to install more global node packages
-RUN sudo -u node npm install -g sequelize-cli nodemon jest-cli ponicode@latest
+# @anthropic-ai/claude-code provides the `claude` CLI inside the container.
+RUN sudo -u node npm install -g sequelize-cli nodemon jest-cli @anthropic-ai/claude-code
 

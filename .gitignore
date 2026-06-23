@@ -2,3 +2,7 @@
 node_modules/*
 .vscode/*
 *.pem
+.idea/
+.husky/_/
+coverage/
+*.log

@@ -18,7 +18,7 @@ const parseIIIF = (metadata, DocumentId) => {
     if (isObject(m)) {
       Object.keys(m.label).forEach(lang => {
         const value = m.value[lang] || m.value.none;
-        const key = m.label.en[0] || Object.values(m.label)[0][0];
+        const key = (m.label.en && m.label.en[0]) || Object.values(m.label)[0][0];
         const docMeta = {
           DocumentId,
           label: m.label[lang][0],

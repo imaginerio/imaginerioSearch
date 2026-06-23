@@ -9,7 +9,7 @@ describe('test feature API route', () => {
 
   beforeAll(async () => {
     layer = await Layer.create({
-      name: 'test',
+      name: 'feature-test',
       title: 'Test Layer',
     });
     const attributes = {
@@ -69,12 +69,15 @@ describe('test feature API route', () => {
 
   it('should fail when accessing a route without a year', async () => {
     const [{ dataValues }] = features;
-    const response = await supertest(app).get(`/feature/${dataValues.id}`).expect(500);
+    const response = await supertest(app).get(`/feature/${dataValues.id}`).expect(400);
 
-    expect(response.status).toEqual(500);
+    expect(response.status).toEqual(400);
   });
 
+  // Remove this suite's fixtures (children first for FK safety), then close the DB.
   afterAll(async () => {
+    await Feature.destroy({ where: { LayerId: layer.id } });
+    await layer.destroy();
     await sequelize.close();
   });
 });

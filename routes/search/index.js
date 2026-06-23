@@ -1,47 +1,59 @@
 const { uniqBy, sortBy } = require('lodash');
+const { z } = require('zod');
 const { Layer, Sequelize } = require('../../models');
+const asyncHandler = require('../../utils/asyncHandler');
+const validate = require('../../utils/validate');
+
+const searchSchema = z.object({
+  query: z.object({
+    text: z.string().min(1, 'text is required'),
+    year: z.coerce.number().int(),
+    lang: z.enum(['en', 'pt']).optional(),
+  }),
+});
 
 module.exports = router => {
-  router.get('/search', (req, res) => {
-    const { text, year } = req.query;
-    if (!text || !year) return res.sendStatus(500);
-    const lang = req.query.lang === 'pt' ? 'Pt' : 'En';
+  router.get(
+    '/search',
+    validate(searchSchema),
+    asyncHandler(async (req, res) => {
+      const { text, year } = req.query;
+      const lang = req.query.lang === 'pt' ? 'Pt' : 'En';
 
-    return Layer.findAll({
-      attributes: ['id', [`title${lang}`, 'title']],
-      include: {
-        association: 'Features',
-        attributes: ['id', 'name', 'firstyear', 'lastyear', 'creator'],
-        where: {
-          firstyear: {
-            [Sequelize.Op.lte]: parseInt(year, 10),
+      const result = await Layer.findAll({
+        attributes: ['id', [`title${lang}`, 'title']],
+        include: {
+          association: 'Features',
+          attributes: ['id', 'name', 'firstyear', 'lastyear', 'creator'],
+          where: {
+            firstyear: { [Sequelize.Op.lte]: year },
+            lastyear: { [Sequelize.Op.gte]: year },
+            [Sequelize.Op.or]: [
+              Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('Features.name')), {
+                [Sequelize.Op.iLike]: `%${text}%`,
+              }),
+              Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('namealt')), {
+                [Sequelize.Op.iLike]: `%${text}%`,
+              }),
+              Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('creator')), {
+                [Sequelize.Op.iLike]: `%${text}%`,
+              }),
+            ],
           },
-          lastyear: {
-            [Sequelize.Op.gte]: parseInt(year, 10),
-          },
-          [Sequelize.Op.or]: [
-            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('Features.name')), {
-              [Sequelize.Op.iLike]: `%${text}%`,
-            }),
-            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('namealt')), {
-              [Sequelize.Op.iLike]: `%${text}%`,
-            }),
-            Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('creator')), {
-              [Sequelize.Op.iLike]: `%${text}%`,
-            }),
-          ],
         },
-      },
-    }).then(result => {
-      let layers = result.filter(l => l.Features.length);
-      layers = layers.map(({ dataValues }) => ({
-        ...dataValues,
-        Features: sortBy(
-          uniqBy(dataValues.Features, f => f.name),
-          'name'
-        ),
-      }));
-      return res.send(layers);
-    });
-  });
+      });
+
+      const layers = result
+        .filter(l => l.Features.length)
+        .map(({ dataValues }) => ({
+          ...dataValues,
+          Features: sortBy(
+            uniqBy(dataValues.Features, f => f.name),
+            'name'
+          ),
+        }));
+
+      res.send(layers);
+    })
+  );
 };

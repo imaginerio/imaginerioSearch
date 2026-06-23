@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const faker = require('faker');
+const { faker } = require('@faker-js/faker');
 const { v4: uuidv4 } = require('uuid');
 const { omit } = require('lodash');
 const { sequelize, Visual, Document } = require('../../models');
@@ -18,12 +18,12 @@ describe('test document API route', () => {
       id: uuidv4(),
       ssid: uuidv4(),
       title: faker.lorem.words(3),
-      creator: `${faker.name.firstName()} ${faker.name.lastName()}`,
+      creator: `${faker.person.firstName()} ${faker.person.lastName()}`,
       firstyear: 1900,
       lastyear: 2000,
       VisualId: visual.id,
-      latitude: faker.datatype.float({ min: -90, max: 90 }),
-      longitude: faker.datatype.float({ min: -180, max: 180 }),
+      latitude: faker.location.latitude(),
+      longitude: faker.location.longitude(),
       geom: {
         type: 'Polygon',
         coordinates: [
@@ -64,8 +64,10 @@ describe('test document API route', () => {
     expect(response.status).toEqual(404);
   });
 
-  // After all tersts have finished, close the DB connection
+  // Remove this suite's fixtures (children first for FK safety), then close the DB.
   afterAll(async () => {
+    await document.destroy();
+    await visual.destroy();
     await sequelize.close();
   });
 });
