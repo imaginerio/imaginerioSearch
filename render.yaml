@@ -90,4 +90,4 @@ services:
 databases:
   - name: imaginerio
     plan: basic-256mb
-    postgresMajorVersion: '16'
+    postgresMajorVersion: '18'
