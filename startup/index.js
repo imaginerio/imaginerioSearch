@@ -50,10 +50,17 @@ if (require.main === module) {
   (async () => {
     await executeMigrations('seeders');
     if (process.env.DEPLOY_HOOK) {
-      const { data } = await axios.post(process.env.DEPLOY_HOOK);
-      logger.info({ data }, 'deploy hook complete');
-      process.exit(0);
+      // The deploy hook is a downstream notification fired after seeding is
+      // already complete. A failure here (e.g. a stale/deleted hook URL) must
+      // not fail the seed job, so swallow the error and just log it.
+      try {
+        const { data } = await axios.post(process.env.DEPLOY_HOOK);
+        logger.info({ data }, 'deploy hook complete');
+      } catch (err) {
+        logger.warn({ err }, 'deploy hook failed (seeding succeeded)');
+      }
     }
+    process.exit(0);
   })().catch(err => {
     logger.fatal({ err }, 'startup failed');
     process.exit(1);
