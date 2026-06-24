@@ -28,6 +28,12 @@ services:
     initialDeployHook: yarn db:job
     envVars:
       - fromGroup: tile-generator
+      # Raise V8's old-space ceiling. On a 512 MB Starter instance Node
+      # otherwise self-caps the heap at ~256 MB, so a burst of large
+      # /document responses can OOM-crash the process ("JS heap out of
+      # memory") while most of the container's RAM is still free.
+      - key: NODE_OPTIONS
+        value: '--max-old-space-size=384'
       - key: IIIF
         value: https://iiif.imaginerio.org
       - key: COLLECTIONS
