@@ -57,7 +57,12 @@ const forEachPage = async (layerId, { where, outFields = ['*'], onPage, label })
     const features = response.features || [];
     if (features.length === 0) break;
     await onPage(features, offset);
-    if (!response.exceededTransferLimit) break;
+    // ArcGIS reports the paging flag at the top level for f=json, but nests it
+    // under `properties` for the f=geojson responses we request here. Reading
+    // only the top level always saw `undefined` and stopped after one page,
+    // capping every layer at PAGE_SIZE (2000) rows.
+    const exceeded = response.exceededTransferLimit ?? response.properties?.exceededTransferLimit;
+    if (!exceeded) break;
     offset += features.length;
   }
 };
