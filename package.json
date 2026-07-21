@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "npx nodemon index.js",
     "start": "cross-env NODE_ENV=production node index.js",
-    "test": "cross-env NODE_ENV=test npx sequelize-cli db:migrate:undo:all && cross-env NODE_ENV=test yarn db:migrate && cross-env NODE_ENV=test yarn jest",
+    "test": "cross-env NODE_ENV=test node scripts/assert-local-db.js test && cross-env NODE_ENV=test npx sequelize-cli db:migrate:undo:all && cross-env NODE_ENV=test yarn db:migrate && cross-env NODE_ENV=test yarn jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -18,7 +18,7 @@
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:job": "yarn db:migrate && node startup",
-    "db:migrate:reset": "npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed",
+    "db:migrate:reset": "node scripts/assert-local-db.js db:migrate:reset && npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed",
     "prepare": "husky || true"
   },
   "lint-staged": {

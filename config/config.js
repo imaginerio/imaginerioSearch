@@ -23,10 +23,11 @@ module.exports = {
     seederStorage: 'sequelize',
   },
   test: {
-    url:
-      process.env.TEST_DB_URL ||
-      process.env.DB_URL ||
-      'postgresql://postgres:postgres@127.0.0.1/imagineriotest',
+    // Deliberately does NOT fall back to DB_URL. `yarn test` begins by dropping
+    // every table, and DB_URL is the production connection string on Render, so
+    // borrowing it here turned a test run into a production wipe. Point
+    // TEST_DB_URL at a test database, or accept the local default below.
+    url: process.env.TEST_DB_URL || 'postgresql://postgres:postgres@127.0.0.1/imagineriotest',
     dialect: 'postgres',
     seederStorage: 'sequelize',
   },
