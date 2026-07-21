@@ -8,17 +8,17 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "npx nodemon index.js",
+    "dev": "nodemon index.js",
     "start": "cross-env NODE_ENV=production node index.js",
-    "test": "cross-env NODE_ENV=test node scripts/assert-local-db.js test && cross-env NODE_ENV=test npx sequelize-cli db:migrate:undo:all && cross-env NODE_ENV=test yarn db:migrate && cross-env NODE_ENV=test yarn jest",
+    "test": "cross-env NODE_ENV=test node scripts/assert-local-db.js test && cross-env NODE_ENV=test sequelize-cli db:migrate:undo:all && cross-env NODE_ENV=test yarn db:migrate && cross-env NODE_ENV=test yarn jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "db:migrate": "npx sequelize-cli db:migrate",
-    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:seed": "sequelize-cli db:seed:all",
     "db:job": "yarn db:migrate && node startup",
-    "db:migrate:reset": "node scripts/assert-local-db.js db:migrate:reset && npx sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed",
+    "db:migrate:reset": "node scripts/assert-local-db.js db:migrate:reset && sequelize-cli db:migrate:undo:all && yarn db:migrate && yarn db:seed",
     "prepare": "husky || true"
   },
   "lint-staged": {
@@ -51,6 +51,7 @@
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
     "sequelize": "^6.37",
+    "sequelize-cli": "6.6.5",
     "uuid": "^9",
     "zod": "^4.4.3"
   },
@@ -67,6 +68,7 @@
     "jest": "^29",
     "jest-cli": "^29",
     "lint-staged": "^15.2.10",
+    "nodemon": "^3.1.14",
     "prettier": "^3",
     "prettier-eslint": "^12.0.0",
     "rewire": "^5.0.0",
