@@ -2,12 +2,23 @@ const supertest = require('supertest');
 const { sequelize, Animation } = require('../../models');
 const app = require('../../server');
 
+const ANIMATION_NAME = 'test-animation';
+
+// Animation.name is unique, so a leftover from a crashed run makes the insert
+// below fail -- and a beforeAll that throws skips this suite's cleanup, so one
+// bad run used to poison every later one. Purge on the way in as well as out,
+// keyed on the fixed name rather than an id captured during setup.
+const removeFixtures = async () => {
+  await Animation.destroy({ where: { name: ANIMATION_NAME } });
+};
+
 describe('animations route', () => {
   let animation;
 
   beforeAll(async () => {
+    await removeFixtures();
     animation = await Animation.create({
-      name: 'test-animation',
+      name: ANIMATION_NAME,
       title: 'Test Animation',
       url: 'https://example.com/animations/test',
       minzoom: 10,
@@ -36,7 +47,7 @@ describe('animations route', () => {
   });
 
   afterAll(async () => {
-    await animation.destroy();
+    await removeFixtures();
     await sequelize.close();
   });
 });

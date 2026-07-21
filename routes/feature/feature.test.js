@@ -3,13 +3,28 @@ const { pick } = require('lodash');
 const { sequelize, Layer, Feature } = require('../../models');
 const app = require('../../server');
 
+const LAYER_NAME = 'feature-test';
+const FEATURE_IDS = ['feature.test.1', 'feature.test.2'];
+
+// Layer.name is unique and the feature ids are fixed, so anything a previous
+// crashed run left behind makes the inserts below fail -- and a beforeAll that
+// throws skips this suite's cleanup, so a single bad run used to poison every
+// later one until the database was rebuilt by hand. Purge on the way in as well
+// as on the way out, keyed on those fixed values rather than on ids captured
+// during setup, so it still works when setup never completed.
+const removeFixtures = async () => {
+  await Feature.destroy({ where: { id: FEATURE_IDS } });
+  await Layer.destroy({ where: { name: LAYER_NAME } });
+};
+
 describe('test feature API route', () => {
   let layer;
   let features;
 
   beforeAll(async () => {
+    await removeFixtures();
     layer = await Layer.create({
-      name: 'feature-test',
+      name: LAYER_NAME,
       title: 'Test Layer',
     });
     const attributes = {
@@ -22,7 +37,7 @@ describe('test feature API route', () => {
     features = [
       await Feature.create({
         ...attributes,
-        id: 'feature.test.1',
+        id: FEATURE_IDS[0],
         geom: {
           type: 'LineString',
           coordinates: [
@@ -33,7 +48,7 @@ describe('test feature API route', () => {
       }),
       await Feature.create({
         ...attributes,
-        id: 'feature.test.2',
+        id: FEATURE_IDS[1],
         geom: {
           type: 'LineString',
           coordinates: [
@@ -76,8 +91,7 @@ describe('test feature API route', () => {
 
   // Remove this suite's fixtures (children first for FK safety), then close the DB.
   afterAll(async () => {
-    await Feature.destroy({ where: { LayerId: layer.id } });
-    await layer.destroy();
+    await removeFixtures();
     await sequelize.close();
   });
 });
