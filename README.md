@@ -24,15 +24,47 @@ A Postgres+PostGIS database is required. The `.devcontainer/` directory ships a 
 
 ## Scripts
 
-| Command                 | What it does                                             |
-| ----------------------- | -------------------------------------------------------- |
-| `yarn dev`              | Run with nodemon (auto-reload)                           |
-| `yarn start`            | Production start (`NODE_ENV=production`)                 |
-| `yarn test`             | Reset test DB, migrate, run Jest                         |
-| `yarn db:migrate`       | Run pending Sequelize migrations                         |
-| `yarn db:seed`          | Run all seeders                                          |
-| `yarn db:job`           | Migrate + run `startup/` ingestion (used by Render cron) |
-| `yarn db:migrate:reset` | Drop, re-migrate, re-seed                                |
+| Command                 | What it does                                              |
+| ----------------------- | --------------------------------------------------------- |
+| `yarn dev`              | Run with nodemon (auto-reload)                            |
+| `yarn start`            | Production start (`NODE_ENV=production`)                  |
+| `yarn test`             | **Drops every table** in the test DB, migrates, runs Jest |
+| `yarn db:migrate`       | Run pending Sequelize migrations                          |
+| `yarn db:seed`          | Run all seeders                                           |
+| `yarn db:job`           | Migrate + run `startup/` ingestion (used by Render cron)  |
+| `yarn db:migrate:reset` | **Drops every table**, re-migrates, re-seeds              |
+
+### Destructive commands
+
+`yarn test` and `yarn db:migrate:reset` both begin with `db:migrate:undo:all`, which runs
+every migration's `down()` and drops the entire schema. Which database that hits is decided
+by `NODE_ENV` plus the environment, so it is easy to get wrong — pointing at production is a
+one-variable mistake.
+
+Two things prevent that:
+
+- The `test` config reads **`TEST_DB_URL` only**. It does not fall back to `DB_URL`, so a
+  production `DB_URL` in your `.env` can never become the target of `yarn test`.
+- Both commands run `scripts/assert-local-db.js` first, which resolves the connection they
+  are about to use and aborts unless it is a disposable database on this machine: every
+  candidate host (URL authority and any `?host=`) must be loopback or a unix socket, and
+  under `NODE_ENV=test` the database name must contain `test`. Under `NODE_ENV=production`
+  they are refused outright, with no override.
+
+To override, set `ALLOW_DESTRUCTIVE_DB` to the **exact** database name, e.g.
+`ALLOW_DESTRUCTIVE_DB=imagineriotest yarn test`. A bare `=1` deliberately does nothing, so
+the variable cannot be blanket-set and quietly cover a later change of `DB_URL`. It is read
+from the real environment only — a line in `.env` is ignored, so an override cannot become
+ambient configuration — and it always prints a warning naming the database it is about to
+destroy.
+
+One limit worth knowing: the guard checks where the connection _points_, not what answers.
+A port-forward or SSH tunnel listening on localhost that proxies to production will pass the
+host check. The `test` config not falling back to `DB_URL` is the defence that does not
+depend on this heuristic.
+
+Forward-only `yarn db:migrate` and `yarn db:job` are **not** guarded — Render runs them
+against production on every deploy and weekly, respectively.
 
 ## Environment
 
