@@ -32,12 +32,18 @@ module.exports = router => {
       });
 
       const types = await Type.findAll({
-        attributes: ['LayerId', [`title${lang}`, 'title'], ['titleEn', 'name']],
+        attributes: ['id', 'LayerId', [`title${lang}`, 'title'], ['titleEn', 'name']],
         order: ['LayerId', `title${lang}`],
         include: {
           model: Feature,
           where,
           required: true,
+          // The join only tests that the type has a feature in range -- no
+          // feature data reaches the response. Selecting no columns stops
+          // Sequelize hydrating every matching row, including its `geom`
+          // polygon, just to discard it below. That hydration grew with the
+          // dataset until it could exhaust the heap on busy years.
+          attributes: [],
         },
       });
 
