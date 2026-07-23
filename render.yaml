@@ -34,6 +34,14 @@ services:
       # memory") while most of the container's RAM is still free.
       - key: NODE_OPTIONS
         value: '--max-old-space-size=384'
+      # Shared secret the imagineRio site build sends as the `x-ratelimit-bypass`
+      # header so its burst of build-time requests skips the API rate limit. The
+      # site build runs on Render too, so the cleanest way to share this is a
+      # Render env group referenced by both services (define and rotate once).
+      # Kept as `sync: false` here so the secret stays out of the blueprint —
+      # enter it in the dashboard and give the build the same value.
+      - key: RATE_LIMIT_BYPASS_TOKEN
+        sync: false
       - key: IIIF
         value: https://iiif.imaginerio.org
       - key: COLLECTIONS

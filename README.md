@@ -75,6 +75,19 @@ See `.env.example` for the full list. The most commonly missed:
 - `MAPPING` — selects the site config (e.g. `rio`); used by seeders and `utils/mapProperties.js`
 - `ARCGIS_API_KEY` — API key for the imagineRio_GDB FeatureServer; consumed by the seeders via `utils/arcgisClient.js`
 
+## Rate limiting
+
+Every request is rate limited per IP — `RATE_LIMIT_PER_MIN` requests per minute
+(default 300), after which the API returns `429`. A static build of the
+imagineRio site fans out far more than that in under a minute, so it needs a way
+around the limit.
+
+Set `RATE_LIMIT_BYPASS_TOKEN` on the API and have the build send the same value
+as the `x-ratelimit-bypass` request header. Matching requests skip the limiter
+entirely and are never counted. The comparison is constant-time, and with no
+token configured no request can bypass — the limiter is unchanged. Keep the
+token secret: anyone who has it can sidestep the limit.
+
 ## API surface
 
 All routes are GET. Wired up via `server.js` auto-loading every directory under `routes/`.
